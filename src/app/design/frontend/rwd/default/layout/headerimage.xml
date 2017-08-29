@@ -1,0 +1,7 @@
+<layout version="0.1.0">
+	<default>
+		<reference name="header">		
+				<block type="softwebwork_headerimage/headerimage"  name="headerimage" as="headerimage" template="headerimage/headerimage.phtml" />
+		</reference>
+	</default>
+</layout>

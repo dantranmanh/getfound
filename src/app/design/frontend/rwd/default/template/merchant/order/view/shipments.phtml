@@ -1,0 +1,47 @@
+<?php
+$_shipmentItems = Mage::getModel('sales/order_shipment')->getCollection();
+$merchantHelper    = Mage::helper('merchant');
+$shipmentItemTable = Mage::getSingleton('core/resource')->getTableName('sales/shipment_item');
+$_shipmentItems->getSelect()
+    ->joinInner(array('si' => $shipmentItemTable), 'si.parent_id = main_table.entity_id', array())
+    ->where('main_table.order_id = ?', Mage::registry('order_id'))
+    ->where('si.merchant_store = ?', Mage::registry('merchant_store'));
+?>
+<h2 class="sub-header"><?php echo $this->__("Shipments"); ?></h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Shipping Number'); ?></th>
+            <th><?php echo $this->__('Date'); ?></th>
+            <th><?php echo $this->__('Tracking Number'); ?></th>
+            <th><?php echo $this->__('Action'); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if($merchantHelper->canCreateShipment(Mage::registry('order_id'))) { ?>
+            <?php if($_shipmentItems->getSize() && count($_shipmentItems->getData()) > 0): ?>
+                <?php foreach($_shipmentItems AS $_item) : ?>
+                    <?php $tracks = $_item->getAllTracks(); ?>
+                    <?php
+                        if ($supplier_id != $_item->getData('supplier_id')) {
+                           continue;
+                        }
+                    ?>
+                    <tr>
+                        <td><?php echo $_item->getIncrementId(); ?></td>
+                        <td><?php echo $_item->getCreatedAt(); ?></td>
+                        <td><?php echo (count($tracks) > 0 ?  '#'.$tracks[0]->getData('track_number') : ''); ?></td>
+                        <td> <a href="<?php echo Mage::getUrl('*/order/shipmentview/', array('id' => $_item->getId())) ?>" class="btn btn-primary"><?php echo $this->__('View'); ?></a></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <td colspan="3"><?php echo $this->__("No Shipments"); ?></td>
+                <td><a href="<?php echo Mage::getUrl('merchant/order/shipmentcreate/', array('id' => $this->getOrder()->getId(), 'merchant_store'=>Mage::registry('merchant_store'))) ?>" class="btn btn-primary"><?php echo $this->__('Create'); ?></a></td>
+            <?php endif; ?>
+        <?php } else { ?>
+            <td colspan="4"><?php echo $this->__("Order is cancelled or requested for cancellation, hence can not be ship"); ?></td>
+        <?php } ?>
+        </tbody>
+    </table>
+</div>

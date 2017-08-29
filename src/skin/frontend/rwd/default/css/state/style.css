@@ -1,0 +1,27 @@
+.state_list li {
+
+  float:left;
+  margin-left:4px;
+}
+.img_shopper {
+  background: url(images/shopper.png);
+  background-size: 100% 100%;
+  margin-bottom: 0px;
+  height: 45px;
+  width: 1000px;
+  clear:both;
+}
+
+.logo {
+  max-width:100%!important;
+}
+.city_list{
+  width:70%;float:left;margin-top:70px;
+}
+.stateinfo{
+  width:30%;float:left;
+}
+
+.category_list{
+  width:70%;float:left;margin-top:70px;
+}

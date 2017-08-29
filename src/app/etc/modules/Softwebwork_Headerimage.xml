@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Softwebwork
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the softwebwork.net license that is
+ * available through the world-wide-web at this URL:
+ * http://www.softwebwork.net/license-agreement.html
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category    Softwebwork
+ * @package     Softwebwork_RewardPoints
+ * @copyright   Copyright (c) 2012 Softwebwork (http://www.softwebwork.net/)
+ * @license     http://www.softwebwork.net/license-agreement.html
+ */
+-->
+<config>
+    <modules>
+        <Softwebwork_Headerimage>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Softwebwork_Headerimage>
+        <!-- Disable Old Reward Points System -->
+    </modules>
+</config>

@@ -1,0 +1,471 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <!-- Mage_Customer -->
+        <reference name="top.links">
+            <action method="addLink" translate="label title" module="merchant"><label>My Account</label><url helper="merchant/getAccountUrl"/><title>My Account</title><prepare/><urlParams/><position>10</position></action>
+            <action method="addLink" translate="label title before_text" module="merchant"><label>Register</label><url helper="merchant/getRegisterUrl" /><title>Register</title><prepare/><urlParams/><position>100</position><li/><a/></action>
+        </reference>
+        <reference name="footer_links2">
+            <action method="addLink" translate="label title" module="catalog"><label>My Account</label><url helper="merchant/getAccountUrl" /><title>My Account</title></action>
+        </reference>
+    </default>
+    <merchant_logged_in>
+        <reference name="top.links">
+            <action method="removeLinkByUrl"><url helper="merchant/getRegisterUrl" /></action>
+            <action method="removeLinkByUrl"><url helper="customer/getAccountUrl" /></action>
+            <action method="removeLinkByUrl"><url helper="customer/getRegisterUrl" /></action>
+            <action method="removeLinkByUrl"><url helper="customer/getLogoutUrl" /></action>
+            <remove name="wishlist_link"/>
+            <remove name="checkout_cart_link"/>
+            <action method="addLink" translate="label title" module="merchant"><label>Log Out</label><url helper="merchant/getLogoutUrl"/><title>Log Out</title><prepare/><urlParams/><position>100</position></action>
+        </reference>
+    </merchant_logged_in>
+
+    <customer_logged_in>
+        <reference name="top.links">
+            <action method="removeLinkByUrl"><url helper="merchant/getRegisterUrl" /></action>
+            <action method="removeLinkByUrl"><url helper="merchant/getAccountUrl" /></action>
+            <remove name="wishlist_link"/>
+            <remove name="checkout_cart_link"/>
+        </reference>
+    </customer_logged_in>
+    <merchant_logged_out>
+        <!---<reference name="right">
+            <block type="merchant/form_login" name="merchant_form_mini_login" before="-" template="merchant/form/mini.login.phtml"/>
+        </reference>-->
+        <reference name="top.links">
+            <action method="addLink" translate="label title" module="merchant"><label>Log In</label><url helper="merchant/getLoginUrl"/><title>Log In</title><prepare/><urlParams/><position>100</position></action>
+        </reference>
+        <remove name="reorder"></remove>
+    </merchant_logged_out>
+    <merchant_account_login translate="label">
+        <label>Account Login Form</label>
+        <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/form_login" name="merchant_form_login" template="merchant/form/login.phtml" />
+        </reference>
+    </merchant_account_login>
+    <merchant_account_logoutsuccess translate="label">
+        <label>Account Logout Success</label>
+        <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="merchant_logout" template="merchant/logout.phtml"/>
+        </reference>
+    </merchant_account_logoutsuccess>
+    <merchant_account_create translate="label">
+        <label>Account Registration Form</label>
+        <!-- Mage_Customer -->
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/form_register" name="merchant_form_register" template="merchant/form/register.phtml">
+                <block type="page/html_wrapper" name="merchant.form.register.fields.before" as="form_fields_before" translate="label">
+                    <label>Form Fields Before</label>
+                </block>
+            </block>
+        </reference>
+    </merchant_account_create>
+    <merchant_account_forgotpassword translate="label">
+        <label>Forgot Password Form</label>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="head">
+            <action method="setTitle" translate="title" module="merchant"><title>Forgot Your Password</title></action>
+        </reference>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+            <action method="setHeaderTitle" translate="title" module="merchant"><title>Password forgotten</title></action>
+        </reference>
+        <reference name="content">
+            <!--<block type="core/template" name="forgotPassword" template="merchant/form/forgotpassword.phtml"/>-->
+            <block type="merchant/account_forgotpassword" name="forgotPassword" template="merchant/form/forgotpassword.phtml" />
+        </reference>
+    </merchant_account_forgotpassword>
+
+    <merchant_account_changeforgotten translate="label">
+        <label>Reset a Password</label>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="head">
+            <action method="setTitle" translate="title" module="merchant">
+                <title>Reset a Password</title>
+            </action>
+        </reference>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+            <action method="setHeaderTitle" translate="title" module="merchant">
+                <title>Reset a Password</title>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/account_changeforgotten" name="changeForgottenPassword" template="merchant/form/resetforgottenpassword.phtml"/>
+        </reference>
+    </merchant_account_changeforgotten>
+
+    <merchant_account_confirmation>
+        <remove name="right"/>
+        <remove name="left"/>
+
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+            <action method="setHeaderTitle" translate="title" module="merchant"><title>Send confirmation link</title></action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="accountConfirmation" template="merchant/form/confirmation.phtml"/>
+        </reference>
+    </merchant_account_confirmation>
+
+    <merchant_account_edit translate="label">
+        <label>Account Edit Form</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="merchant"><title>Edit Account Info</title></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/form_edit" name="merchant_edit" template="merchant/form/edit.phtml"/>
+        </reference>
+
+        <reference name="left">
+          <action method="unsetChild"><name>left.permanent.callout</name></action>
+        </reference>
+    </merchant_account_edit>
+	
+	<merchant_payment_edit translate="label">
+        <label>Account Edit Form</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setHeaderTitle" translate="title" module="merchant"><title>Edit Payment Info</title></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/form_edit" name="merchant_edit" template="merchant/form/payment.phtml">
+                <block type="merchant/payment_list" name="merchant_payment_list"/>
+            </block>
+        </reference>
+        <reference name="left">
+          <action method="unsetChild"><name>left.permanent.callout</name></action>
+        </reference>
+    </merchant_payment_edit>
+
+<!--
+Customer account pages, rendered for all tabs in dashboard
+-->
+
+    <merchant_account translate="label">
+        <label>My Account (All Pages)</label>
+        <!--remove name="catalog.compare.sidebar"/>
+        <remove name="sale.reorder.sidebar"/-->
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+            <action method="addBodyClass"><class>merchant-account</class></action>
+        </reference>
+
+        <reference name="content">
+            <block type="page/html_wrapper" name="my.account.wrapper" translate="label">
+                <label>My Account Wrapper</label>
+                <action method="setElementClass"><value>my-account</value></action>
+            </block>
+        </reference>
+
+        <reference name="left_first">
+            <block type="merchant/account_navigation" name="merchant_account_navigation" before="-" template="merchant/account/navigation.phtml">
+                <action method="addLink" translate="label" module="merchant"><name>account</name><path>merchant/account/</path><label>Account Dashboard</label></action>
+                <action method="addLink" translate="label" module="merchant"><name>merchant_credits</name><path>merchant/credits/index/</path><label>Add Credits</label></action>
+                <action method="addLink" translate="label" module="merchant"><name>merchant_credits_history</name><path>merchant/credits/history/</path><label>Credits History</label></action>
+                <action method="addLink" translate="label" module="merchant"><name>merchant_stores</name><path>merchant/store/index/</path><label>Manage Stores</label></action>
+                <action method="addLink" translate="label" module="merchant"><name>merchant_products</name><path>merchant/product/index</path><label>Manage Products</label></action>
+                <action method="addLink" translate="label" module="merchant"><name>merchant_orders</name><path>merchant/order/index</path><label>Manage Orders</label></action>
+				<action method="addLink" translate="label" module="merchant"><name>merchant_payment</name><path>merchant/payment/edit</path><label>Payment Details</label></action>
+				<action method="addLink" translate="label" module="merchant"><name>merchant_payment</name><path>merchant/payment/edit</path><label>Payment Details</label></action>
+            </block>
+        </reference>
+    </merchant_account>
+    <merchant_account_index translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/account_dashboard" name="merchant_account_dashboard" template="merchant/account/dashboard.phtml">
+                <block type="merchant/account_dashboard_hello" name="merchant_account_dashboard_hello" as="hello" template="merchant/account/dashboard/hello.phtml"/>
+                <block type="core/template" name="merchant_account_dashboard_top" as="top" />
+                <block type="merchant/account_dashboard_info" name="merchant_account_dashboard_info" as="info" template="merchant/account/dashboard/info.phtml"/>
+                <block type="merchant/account_dashboard_newsletter" name="merchant_account_dashboard_newsletter" as="newsletter" template="merchant/account/dashboard/newsletter.phtml"/>
+                <block type="merchant/account_dashboard_address" name="merchant_account_dashboard_address" as="address" template="merchant/account/dashboard/address.phtml"/>
+            </block>
+        </reference>
+
+    </merchant_account_index>
+	
+	 <merchant_address_index translate="label">
+        <label>Merchant My Account Address Book</label>
+        <!-- Mage_Customer -->
+        <update handle="merchant_account"/>
+        <reference name="my.account.wrapper">
+            <block type="merchant/address_book" name="address_book" template="merchant/address/book.phtml"/>
+        </reference>
+    </merchant_address_index>
+
+<!--
+Customer account address edit page
+-->
+
+    <merchant_address_form translate="label">
+        <label>Merchant My Account Address Edit Form</label>
+        <!-- Mage_Customer -->
+        <update handle="merchant_account"/>
+        <reference name="my.account.wrapper">
+            <block type="merchant/address_edit" name="merchant_address_edit" template="merchant/address/edit.phtml"/>
+        </reference>
+    </merchant_address_form>
+
+    <merchant_store_index translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/store_list" name="merchant_store_list"/>
+        </reference>
+    </merchant_store_index>
+    <merchant_store_add translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/store_add" name="merchant_store_add">
+                <block type="merchant/store_add" name="category_tree" as="category_tree" template="merchant/store/categoryTree.phtml"/>
+            </block>
+        </reference>
+    </merchant_store_add>
+    <merchant_store_edit translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/store_add" name="merchant_store_add">
+                <block type="merchant/store_add" name="category_tree" as="category_tree" template="merchant/store/categoryTree.phtml"/>
+            </block>
+        </reference>
+    </merchant_store_edit>
+    <merchant_product_index translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/product_list" name="merchant_product_list"/>
+        </reference>
+    </merchant_product_index>
+    <merchant_product_add translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/product_add" name="merchant_product_add"/>
+        </reference>
+    </merchant_product_add>
+
+    <merchant_product_edit translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/product_add" name="merchant_product_edit"/>
+        </reference>
+    </merchant_product_edit>
+    <merchant_index_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/list" name="store_list" as="store_list" />
+        </reference>
+    </merchant_index_view>
+    <merchant_index_product>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/product" name="product_list" as="product_list" />
+            <action method="setColumnCount">
+                <coulumn>3</coulumn>
+            </action>
+        </reference>
+    </merchant_index_product>
+    <merchant_order_index translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/order_list" name="merchant_order_list"/>
+        </reference>
+    </merchant_order_index>
+
+    <merchant_credits_index translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/credits_list" name="merchant_credits_list" as="merchant_credits_list" />
+        </reference>
+    </merchant_credits_index>
+    <merchant_credits_history translate="label">
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <!-- Mage_Customer -->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>merchant/store.js</script></action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="merchant/history_credit" name="merchant_credits_history" as="merchant_credits_history" />
+        </reference>
+    </merchant_credits_history>
+    <merchant_order_view>
+        <remove name="right"/>
+        <remove name="left"/>
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/merchant/bootstrap.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/merchant/custom.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/merchant/bootstrap.min.css</stylesheet></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.swipe.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/slideshow.js</name></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/order_view" name="merchant_order_view">
+                <block type="page/html" name="order_view_order" as="view_order" template="merchant/order/view/order.phtml" />
+                <block type="page/html" name="order_view_shipments" as="view_shipments" template="merchant/order/view/shipments.phtml" />
+                <block type="page/html" name="order_view_history" as="view_history" template="merchant/order/view/history.phtml" />
+                <block type="page/html" name="order_view_invoices" as="view_invoices" template="merchant/order/view/invoices.phtml" />
+            </block>
+        </reference>
+    </merchant_order_view>
+    <merchant_order_shipmentcreate>
+        <remove name="right"/>
+        <remove name="left"/>
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/merchant/bootstrap.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/merchant/custom.css</stylesheet></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.swipe.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/slideshow.js</name></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/shipment_create" name="merchant_shipment_create" template="merchant/shipment/create.phtml" />
+        </reference>
+    </merchant_order_shipmentcreate>
+
+    <merchant_order_shipmentview>
+        <remove name="right"/>
+        <remove name="left"/>
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/merchant/bootstrap.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/merchant/custom.css</stylesheet></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.swipe.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/slideshow.js</name></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/shipment_view" name="merchant_shipment_view" template="merchant/shipment/view.phtml" />
+        </reference>
+    </merchant_order_shipmentview>
+
+    <merchant_order_createinvoice>
+        <remove name="right"/>
+        <remove name="left"/>
+        <label>My Account Dashboard</label>
+        <update handle="merchant_account"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addCss"><stylesheet>css/merchant/bootstrap.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/merchant/custom.css</stylesheet></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/lib/jquery.cycle2.swipe.min.js</name></action>
+            <action method="removeItem"><type>skin_js</type><name>js/slideshow.js</name></action>
+        </reference>
+        <reference name="content">
+            <block type="merchant/invoice_create" name="merchant_invoice_create" template="merchant/invoice/create.phtml" />
+        </reference>
+    </merchant_order_createinvoice>
+</layout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <modules>
+    <Location_Customerattribute>
+      <version>0.0.1.1</version>
+    </Location_Customerattribute>
+  </modules>
+    <global>
+		<helpers>
+		  <customerattribute>
+			<class>Location_Customerattribute_Helper</class>
+		  </customerattribute>
+		</helpers>
+		<models>
+		  <customerattribute>
+			<class>Location_Customerattribute_Model</class>
+			<resourceModel>modulename_mysql4</resourceModel>
+		  </customerattribute>
+		</models>
+        <resources>
+            <customerattribute_setup>
+                <setup>
+                    <module>Location_Customerattribute</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </customerattribute_setup>
+			<customerattribute_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </customerattribute_read>
+            <customerattribute_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </customerattribute_write>
+        </resources>
+    </global>
+</config>

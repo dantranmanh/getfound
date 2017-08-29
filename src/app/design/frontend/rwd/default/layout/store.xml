@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <store_index_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/list" name="store_list" as="store_list" />
+        </reference>
+    </store_index_view>
+    <store_product_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/product" name="product_list" as="product_list" />
+            <action method="setColumnCount">
+                <coulumn>3</coulumn>
+            </action>
+        </reference>
+    </store_product_view>
+</layout>

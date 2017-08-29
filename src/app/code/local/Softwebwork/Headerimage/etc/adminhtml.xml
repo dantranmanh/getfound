@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <softwebwork_headerimage module="softwebwork_headerimage" translate="title">
+            <title>Header Image</title>
+            <sort_order>1000</sort_order>
+            <children>
+				<softwebwork_headerimage_headerimage module="softwebwork_headerimage" translate="title">
+                    <title>Header Image</title>
+                    <sort_order>2001</sort_order>
+                    <action>adminhtml/headerimage</action>
+                </softwebwork_headerimage_headerimage>
+            </children>
+        </softwebwork_headerimage>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <softwebwork_headerimage translate="title">
+                                        <title>Softwebwork</title>
+                                        <sort_order>550</sort_order>
+                                    </softwebwork_headerimage>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <translate>
+        <modules>
+            <Softwebwork_Headerimage>
+                <files>
+                    <default>Softwebwork_Headerimage.csv</default>
+                </files>
+            </Softwebwork_Headerimage>
+        </modules>
+    </translate>
+</config>

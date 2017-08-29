@@ -1,0 +1,35 @@
+<?php
+//echo "City Is Coming";
+$cityInfo = $this->getCityInfo();
+$stateInfo = $this->getStateInfoById();
+//echo "<pre>"; var_dump($cityInfo); echo "</pre>";
+
+if(($cityInfo->count()) > 0){
+    echo $this->getCssJsHtml();
+    ?>
+    <div >
+        <ul>
+            <li><h3 style="text-transform: capitalize;"><?php echo $stateInfo->getStateName(); ?> /</h3> </li>
+        </ul>
+    </div>
+    <div class="stateinfo">
+       <ul>
+             <li><h1><?php echo $stateInfo->getStateName(); ?></h1></li>
+              <li>&nbsp;</li>
+             <li><img src="<?php echo $stateInfo->getStateImageName(); ?>" ></li>
+       </ul>
+    </div>
+    <div class="city_list">
+       <ul>
+           <?php foreach($cityInfo as $cityIn){ ?>
+                  <li><a href="/city/city/view/sid/<?php echo $cityIn->getStateId();?>/id/<?php echo $cityIn->getId(); ?>"><?php echo $cityIn->getCityName();?></a></li>
+           <?php } ?>
+       </ul>
+    </div>
+
+<?php
+}
+?>
+<div class="buttons-set">
+			 <p class="back-link thumb"><a href="javascript:history.go(-1)"><img src="<?php echo $this->getSkinUrl('images/back-thumb.png');?>"/> <?php echo $this->__('Back') ?></a></p>
+</div>

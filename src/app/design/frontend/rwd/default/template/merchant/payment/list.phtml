@@ -1,0 +1,70 @@
+<div class="page-title">
+    <h1><?php echo $this->__('Order Payments Details') ?></h1>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php $merchantOrders = $this->getMerchantOrders();?>
+<?php $merchantHelper = $this->helper('merchant');?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($merchantOrders->getSize()): ?>
+    <table class="data-table" id="my-orders-table">
+        <col width="1" />
+        <col/>
+        <col />
+        <col/>
+        <col/>
+        <col width="1" />
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Date') ?></th>
+            <th><?php echo $this->__('Store') ?></th>
+            <th><?php echo $this->__('Total') ?></th>
+            <th><?php echo $this->__('Payer Id') ?></th>
+            <th><?php echo $this->__('Payer Email') ?></th>
+            <th><?php echo $this->__('Currency') ?></th>
+            <th><?php echo $this->__('Payer Status') ?></th>
+            <th><?php echo $this->__('Address Status') ?></th>
+            <th><?php echo $this->__('Payment Status') ?></th>
+            <th><?php echo $this->__('Action') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($merchantOrders as $merchantOrder): ?>
+            <?php
+            /***
+             * Only show Paypal Order in this Payment Section!
+             */
+            $paypalInfor= $merchantOrder->getOrder()->getPayment()->getData('additional_information');
+            if(!empty($paypalInfor['paypal_payer_id']) && !empty($paypalInfor['paypal_payer_email'])){
+
+            }else continue;
+            ?>
+            <tr>
+                <td><?php echo $merchantOrder->getCreatedAt() ?></td>
+                <td><?php echo $merchantOrder->getStoreName(); ?></td>
+                <td><?php echo $merchantOrder->getOrderTotal(); ?></td>
+                <td><?php echo $paypalInfor['paypal_payer_id']; ?></td>
+                <td><?php echo $paypalInfor['paypal_payer_email']; ?></td>
+                <td><?php echo Mage::app()->getLocale()->currency($merchantOrder->getOrder()->getOrderCurrencyCode())->getSymbol() ?></td>
+                <td><?php echo $paypalInfor['paypal_payer_status']; ?></td>
+                <td><?php echo $paypalInfor['paypal_address_status']; ?></td>
+                <td><?php echo $paypalInfor['paypal_payment_status']; ?></td>
+                <td>
+                    <a href="<?php echo Mage::getUrl('merchant/order/view/', array('id' => $merchantOrder->getOrderId(), 'merchant_store'=>$merchantOrder->getMerchantStore())) ?>"
+                       class="btn btn-primary"><?php echo $this->__('View Order'); ?></a>
+                    <?php if(!$this->isFullyShipped($merchantOrder->getOrderId(), $merchantOrder->getMerchantStore()) && $merchantOrder->getState() != 'canceled' &&
+                        $merchantOrder->getShippingAddress() && !(($merchantOrder->getQtyCanceled()*1) == $merchantOrder->getQtyOrdered())): ?>
+                        <a href="<?php echo Mage::getUrl('merchant/shipment/create/', array('id' =>
+                            $merchantOrder->getOrderId())) ?>" class="btn btn-primary btn-success"><?php echo $this->__('Ship'); ?></a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-orders-table');</script>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have no Paypal orders.'); ?></p>
+<?php endif ?>
+

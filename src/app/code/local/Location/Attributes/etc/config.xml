@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<config>
+	<modules>
+		<Location_Attributes>
+			<version>1.5.7</version>
+		</Location_Attributes>
+	</modules>
+
+	<global>
+		<resources>
+			<attributes_setup>
+				<setup>
+					<module>Location_Attributes</module>
+					<class>Mage_Sales_Model_Mysql4_Setup</class>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</attributes_setup>
+			<attributes_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</attributes_read>
+			<attributes_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</attributes_write>
+		</resources>
+	</global>
+
+</config>

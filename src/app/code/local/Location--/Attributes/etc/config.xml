@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<config>
+	<modules>
+		<Location_Attributes>
+			<version>1.4.1</version>
+		</Location_Attributes>
+	</modules>
+
+	<global>
+
+		<resources>
+			<attributes_setup>
+				<setup>
+					<module>Location_Attributes</module>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</attributes_setup>
+			<attributes_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</attributes_read>
+			<attributes_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</attributes_write>
+		</resources>
+
+	</global>
+	<blocks>
+	<admin><!-- Module Name -->
+		<rewrite>
+			<!-- Module Name -->
+
+			<catalog_product_edit_tab_attributes>Location_Attributes_Block_Catalog_Product_Edit_Tab_Attributes</catalog_product_edit_tab_attributes>
+		</rewrite>
+	</admin>
+	</blocks>
+</config>

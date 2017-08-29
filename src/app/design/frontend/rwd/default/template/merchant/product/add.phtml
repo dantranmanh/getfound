@@ -1,0 +1,194 @@
+<?php
+$currentProduct = array();
+if (Mage::registry('merchant_product')) {
+    $currentProduct = Mage::registry('merchant_product');
+}
+//echo "<pre>"; var_dump($currentProduct); echo "</pre>";
+ $store = $this->getStoreList();
+?>
+<div class="account-create">
+    <div class="page-title">
+        <?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {?>
+            <h1><?php echo $this->__('Edit Merchant Product: '). $currentProduct->getName();?></h1>
+        <?php } else { ?>
+            <h1><?php echo $this->__('Create an Merchant Product') ?></h1>
+        <?php } ?>
+    </div>
+    <?php echo $this->getMessagesBlock()->toHtml() ?>
+    <?php /* Extensions placeholder */ ?>
+    <?php  if (empty($store->count()) ) { ?>
+		 <h2 class="legend"><?php echo $this->__('There is no store. Please Add stores before adding products') ?></h2>
+	<?php } ?>
+    <form action="<?php echo $this->getSaveProductUrl() ?>" method="post" id="form-validate" enctype="multipart/form-data">
+        <div class="fieldset">
+            <input type="hidden" name="form_key" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+            <?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) { ?>
+                <input type="hidden" name="id" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getId();}?>" />
+            <?php } ?>
+            <h2 class="legend"><?php echo $this->__('Product Information') ?></h2>
+            <ul class="form-list">
+                <li>
+                    <label for="product_name" class="required"><em>*</em><?php echo $this->__('Product Name') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="name" id="name" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getName();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Product Name')) ?>" class="input-text required-entry" />
+                    </div>
+                </li>
+                <li>
+                    <label for="state" class="required"><em>*</em><?php echo $this->__('Store') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStoreId = '';
+                        if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {
+                            $selectedStoreId = $currentProduct->getMerchantStore();
+                        }
+                        ?>
+                        <select id="merchant_store" name="merchant_store" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select Store');?></option>
+                            <?php
+                            $store = $this->getStoreList();?>
+                            <?php
+                            if ($store->count()) {
+                                foreach($store as $storeInfo) {
+                                    ?>
+                                    <option <?php if ($selectedStoreId == $storeInfo->getId()) {echo 'selected="selected"';}?> value="<?php echo $storeInfo->getId();?>"><?php echo $storeInfo->getStoreName();?></option>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="product_sku" class="required"><em>*</em><?php echo $this->__('Product Sku') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="sku" id="sku" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getSku();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Product Sku')) ?>" class="input-text required-entry" />
+                    </div>
+                </li>
+                <li>
+                    <label for="product_price" class="required"><em>*</em><?php echo $this->__('Product Price') ?></label>
+                    <div class="input-box">
+                        <input type="text" class="required-entry validate-zero-or-greater input-text" name="price" id="price" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getPrice();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Product Price')) ?>" class="input-text required-entry" />
+                    </div>
+                </li>
+                <li>
+                    <label for="product_weight" class="required"><em>*</em><?php echo $this->__('Weight') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="weight" id="weight" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getWeight();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Weight')) ?>" class="input-text required-entry validate-number" />
+                    </div>
+                </li>
+
+                <li>
+                    <label for="status"><?php echo $this->__('Status') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {
+                            $selectedStatus = $currentProduct->getStatus();
+
+                        }
+                        ?>
+                        <select id="status" name="status" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select Status');?></option>
+                            <option value="1" <?php if ($selectedStatus == 1) {echo 'selected="selected"';}?>><?php echo $this->__('Publish');?></option>
+                            <option value="2" <?php if ($selectedStatus == 2) {echo 'selected="selected"';}?>><?php echo $this->__('Unpublish');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="product_radius" ><?php echo $this->__('Radius') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="radius" id="radius" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getRadius();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Radius')) ?>"  />
+                    </div>
+                </li>
+                <li>
+                    <label for="product_cost_of_delivery" ><?php echo $this->__('Cost of Delivery') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="cost_of_delivery" id="cost_of_delivery" value="<?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getCostOfDelivery();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Cost of Delivery')) ?>"  />
+                    </div>
+                </li>
+                <li>
+                    <label for="status" class="required"><em>*</em><?php echo $this->__('Stock Availibility') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {
+                            //$selectedStatus = $currentProduct->getStockStatus();
+							$selectedStatus = Mage::getModel('cataloginventory/stock_item')->loadByProduct($currentProduct)->getIsInStock();
+                        }
+                        ?>
+                        <select id="stock_status" name="stock_status" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select');?></option>
+                            <option value="1" <?php if ($selectedStatus == 1) {echo 'selected="selected"';}?>><?php echo $this->__('In Stock');?></option>
+                            <option value="2" <?php if ($selectedStatus == 2) {echo 'selected="selected"';}?>><?php echo $this->__('Out of Stock');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Keyword') ?></label>
+                    <div class="input-box">
+                        <textarea rows="3" cols="20" name="meta_keyword" id="meta_keyword" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Keyword')) ?>" class="input-text"><?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getMetaKeyword();}?></textarea>
+
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Description') ?></label>
+                    <div class="input-box">
+                        <textarea rows="5" cols="20" name="description" id="description" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Description')) ?>" class="input-text"><?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) {echo $currentProduct->getDescription();}?></textarea>
+
+                    </div>
+                </li>
+                <li>
+                    <label for="product_image" class=""><?php echo $this->__('Product Image') ?></label>
+					 <?php if (!empty($currentProduct) && $currentProduct instanceof Mage_Catalog_Model_Product) { ?>
+						<div><img src="<?php echo $this->helper('catalog/image')->init($currentProduct, 'image')->resize(38, 38);?>"></div>
+					 <?php }?>
+                    <div class="input-box">
+                        <input type="file" name="images[]" class="dumimg wk_imagevalidate" accept="image/*" size="33" >
+                        <input type="radio" value='' class='defaultimage' onClick='defaultimagevalue(this)' name="defaultimage">
+                        <span class='defaultimageset'><?php echo $this->__("Base image"); ?></span>
+                        <br>
+                        <a href="#" onClick="showOtherImage(); return false;"><?php echo $this->__('Add other image') ?></a>
+                        <br />
+                        <div id="otherImages"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="buttons-set">
+            <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+            <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>" class="back-link"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+            <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Submit')) ?>" class="button"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+        </div>
+    </form>
+    <script type="text/javascript">
+        //<![CDATA[
+        var dataForm = new VarienForm('form-validate', true);
+        var i=2;
+        function showOtherImage(){
+            var newdiv = document.createElement('div');
+            newdiv.setAttribute("id","childDiv"+i);
+            newdiv.innerHTML = "<input type='file' name='images[]' accept='image/\*' class='wk_imagevalidate'/><input type='radio'  onClick='defaultimagevalue(this)'  value=''  class='defaultimage' name='defaultimage'><span class='defaultimageset'>Base image</span><a href=\"javascript:;\" onclick=\"removeEvent('childDiv"+i+"')\"><?php echo $this->__('Remove ') ?></a>";
+            var ni = document.getElementById('otherImages');
+            ni.appendChild(newdiv);
+            i++;
+        }
+        function removeEvent(divNum){
+            var d = document.getElementById('otherImages');
+            var olddiv = document.getElementById(divNum);
+            d.removeChild(olddiv);
+            i--;
+        }
+        function defaultimagevalue(object){
+            var strs=jQuery(object).prev('input').val().split('\\');
+            //alert(strs);
+            jQuery(object).val(strs[strs.length-1]);
+        }
+        //]]>
+    </script>
+</div>

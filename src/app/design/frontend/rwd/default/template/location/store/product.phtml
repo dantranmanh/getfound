@@ -1,0 +1,248 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @see Mage_Catalog_Block_Product_List
+ */
+/* @var $this Mage_Catalog_Block_Product_List */
+?>
+<div style="width:100%!important;">
+<?php
+$cityStoreCollection = $this->getCityStoreCollection();
+
+$_productCollection= $this->getLoadedProductCollection();
+$_helper = $this->helper('catalog/output');
+?>
+<?php foreach($cityStoreCollection as $storeproduct){ ?>
+ 
+   <div class="header-store-top"><div class="main"><img src="<?php echo Mage::getBaseUrl('media');?>wysiwyg/logo_bag.png" width="40px" height="35px;" align="absmiddle" class="header-store-default-logo"><?php echo $storeproduct->getStoreName(); ?></div></div>
+  <div class="header-store-logo-dotted-line">
+      <img src="<?php echo Mage::getBaseUrl('media'); ?>wysiwyg/dotted_line.png" style="width:100%; margin:0 auto;">`
+   </div>
+<?php } ?>  
+<?php if(!$_productCollection->count()): ?>
+    <p class="note-msg"><?php echo $this->__('There are no products matching the selection.') ?></p>
+<?php else: ?>
+
+    <div class="category-products">
+        <?php //echo $this->getToolbarHtml() ?>
+        <?php // List mode ?>
+        <?php if($this->getMode()!='grid'): ?>
+            <?php $_iterator = 0; ?>
+            <ol class="products-list" id="products-list">
+                <?php foreach ($_productCollection as $_product): ?>
+                    <li class="item<?php if( ++$_iterator == sizeof($_productCollection) ): ?> last<?php endif; ?>">
+                        <?php // Product Image ?>
+                         <p class ="product-image">
+                <a href="<?php echo $this->getUrl('ajax/product/quickview/id/' . $_product->getId()) ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>" class="ajax">Quick View</a>
+              
+                    <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(140); ?>" width="140" height="140" alt="<?php echo $this->htmlEscape($this->getImageLabel($_product, 'small_image')) ?>" />
+               
+            </p>
+                        <?php // Product description ?>
+                        <div class="product-shop">
+                            <div class="f-fix">
+                                <div class="product-primary">
+                                    <?php $_productNameStripped = $this->stripTags($_product->getName(), null, true); ?>
+                                    <h2 class="product-name"><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped; ?>"><?php echo $_helper->productAttribute($_product, $_product->getName() , 'name'); ?></a></h2>
+                                    <?php if($_product->getRatingSummary()): ?>
+                                        <?php echo $this->getReviewsSummaryHtml($_product) ?>
+                                    <?php endif; ?>
+                                    <?php
+                                    // Provides extra blocks on which to hang some features for products in the list
+                                    // Features providing UI elements targeting this block will display directly below the product name
+                                    if ($this->getChild('name.after')) {
+                                        $_nameAfterChildren = $this->getChild('name.after')->getSortedChildren();
+                                        foreach ($_nameAfterChildren as $_nameAfterChildName) {
+                                            $_nameAfterChild = $this->getChild('name.after')->getChild($_nameAfterChildName);
+                                            $_nameAfterChild->setProduct($_product);
+                                            echo $_nameAfterChild->toHtml();
+                                        }
+                                    }
+                                    ?>
+                                </div>
+                                <div class="product-secondary">
+                                    <?php echo $this->getPriceHtml($_product, true) ?>
+                                </div>
+                                <div class="product-secondary">
+                                    <?php if(!$_product->canConfigure() && $_product->isSaleable()): ?>
+                                        <p class="action"><button type="button" title="<?php echo $this->quoteEscape($this->__('Add to Cart')) ?>" class="button btn-cart" id="cart_popup" onclick="setLocation('<?php echo Mage::helper('checkout/cart')->getAddUrl($_product) ?>')"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button></p>
+                                    <?php elseif($_product->getStockItem() && $_product->getStockItem()->getIsInStock()): ?>
+                                        <p class="action"><a title="<?php echo $this->quoteEscape($this->__('View Details')) ?>" class="button" href="<?php echo $_product->getProductUrl() ?>"><?php echo $this->__('View Details') ?></a></p>
+                                    <?php else: ?>
+                                        <p class="action availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                                    <?php endif; ?>
+                                   
+                                </div>
+                                <div class="desc std">
+                                    <?php echo $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                                    <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped ?>" class="link-learn"><?php echo $this->__('Learn More') ?></a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ol>
+            <script type="text/javascript">decorateList('products-list', 'none-recursive')</script>       
+        <?php else: ?>
+
+        <?php // Grid Mode ?>
+
+        <?php $_collectionSize = $_productCollection->count() ?>
+        <?php $_columnCount = $this->getColumnCount(); ?>
+            <ul class="products-grid products-grid--max-<?php echo $_columnCount; ?>-col">
+                <?php $i=0; foreach ($_productCollection as $_product): ?>
+                    <?php /*if ($i++%$_columnCount==0): ?>
+            <?php endif*/ ?>
+                    <li class="item<?php if(($i-1)%$_columnCount==0): ?> first<?php elseif($i%$_columnCount==0): ?> last<?php endif; ?>">
+            <p class ="product-image">
+                <a href="<?php echo $this->getUrl('ajax/product/quickview/id/' . $_product->getId()) ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>" class="ajax ">Quick View</a>
+              
+                    <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(140); ?>" width="140" height="140" alt="<?php echo $this->htmlEscape($this->getImageLabel($_product, 'small_image')) ?>" />
+               
+            </p>
+                        <div class="product-info">
+                            <h2 class="product-name"><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h2>
+                            <?php
+                            // Provides extra blocks on which to hang some features for products in the list
+                            // Features providing UI elements targeting this block will display directly below the product name
+                            if ($this->getChild('name.after')) {
+                                $_nameAfterChildren = $this->getChild('name.after')->getSortedChildren();
+                                foreach ($_nameAfterChildren as $_nameAfterChildName) {
+                                    $_nameAfterChild = $this->getChild('name.after')->getChild($_nameAfterChildName);
+                                    $_nameAfterChild->setProduct($_product);
+                                    echo $_nameAfterChild->toHtml();
+                                }
+                            }
+                            ?>
+                            <?php echo $this->getPriceHtml($_product, true) ?>
+                            <?php if($_product->getRatingSummary()): ?>
+                                <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
+                            <?php endif; ?>
+                            <!--<div class="actions">
+                                <?php if(!$_product->canConfigure() && $_product->isSaleable()): ?>
+                                    <button type="button" title="<?php echo $this->quoteEscape($this->__('Add to Cart')) ?>" class="button btn-cart" id="cart_popup" onclick="setLocation('<?php echo Mage::helper('checkout/cart')->getAddUrl($_product) ?>')"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
+                                <?php elseif($_product->getStockItem() && $_product->getStockItem()->getIsInStock()): ?>
+                                    <a title="<?php echo $this->quoteEscape($this->__('View Details')) ?>" class="button" href="<?php echo $_product->getProductUrl() ?>"><?php echo $this->__('View Details') ?></a>
+                                <?php else: ?>
+                                    <p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                                <?php endif; ?>
+                                
+                            </div>-->
+                        </div>
+                    </li>
+                    <?php /*if ($i%$_columnCount==0 || $i==$_collectionSize): ?>
+            <?php endif*/ ?>
+                <?php endforeach ?>
+            </ul>
+            <script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd','even','first','last'])</script>
+        <?php endif; ?>
+
+        <!--<div class="toolbar-bottom">
+            <?php //echo $this->getToolbarHtml() ?>
+        </div>-->
+        <div class="toolbar-bottom">
+            <?php $this->getChildHtml('toolbar');
+            ?>
+        </div>
+    </div>
+	 <?php foreach($cityStoreCollection as $storeproduct){ ?>
+		
+		
+<div class="store-details">
+
+<div class="store-details-left">
+	<div class="store-details-left-image">
+		<img src="<?php echo $storeproduct->getImageOfStore(); ?>" width="200px" height="200px">		
+	</div>
+</div>
+
+<div class="store-details-right">
+	<div>
+	<ul >
+	<li class="store-details-right-section1">Address : </li>
+	<li class="store-details-right-section2"><?php echo $storeproduct->getAddress(); ?></li>
+	</ul>
+	<ul >
+	<li class="store-details-right-section1">Store Map : </li>
+	<li class="store-details-right-section2">hdsfkskdhk</li>
+	</ul>
+	<ul >
+	<li class="store-details-right-section1">Store Email : </li>
+	<li class="store-details-right-section2"><?php echo $storeproduct->getEmailAddress(); ?></li>
+	</ul>
+	</div>
+	
+	<div class="store-hours-main">
+	<span>STORE HOURS</span>
+	
+	<ul>
+	<li class="store-hours-main-list">Sun </li>
+	<li class="store-hours-main-list1">Mon</li>
+	<li class="store-hours-main-list">Tue</li>
+	<li class="store-hours-main-list">Wed</li>
+	<li class="store-hours-main-list">Thu</li>
+	<li class="store-hours-main-list">Fri</li>
+	<li class="store-hours-main-list">Sat</li>
+	</ul>
+	
+	<ul class="store-hours-main-list-val">
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourSunday(); ?> TO <?php echo $storeproduct->getStoreHourSunday1(); ?></li>
+	<li class="store-hours-main-list4"><?php echo $storeproduct->getStoreHourMonday(); ?> TO <?php echo $storeproduct->getStoreHourMonday1(); ?></li>
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourTuesday(); ?> TO <?php echo $storeproduct->getStoreHourTuesday1(); ?></li>
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourWednesday(); ?> TO <?php echo $storeproduct->getStoreHourWednesday1(); ?></li>
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourThursday(); ?> TO <?php echo $storeproduct->getStoreHourThursday1(); ?></li>
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourFriday(); ?> TO <?php echo $storeproduct->getStoreHourFriday1(); ?></li>
+	<li class="store-hours-main-list3"><?php echo $storeproduct->getStoreHourSutarday(); ?> TO <?php echo $storeproduct->getStoreHourSutarday1(); ?></li>
+	</ul>
+	
+	</div>
+	
+</div>
+
+</div>
+</div>
+	<?php } ?>
+<?php endif; ?>
+<?php
+// Provides a block where additional page components may be attached, primarily good for in-page JavaScript
+if ($this->getChild('after')) {
+    $_afterChildren = $this->getChild('after')->getSortedChildren();
+    foreach ($_afterChildren as $_afterChildName) {
+        $_afterChild = $this->getChild('after')->getChild($_afterChildName);
+        //set product collection on after blocks
+        $_afterChild->setProductCollection($_productCollection);
+        echo $_afterChild->toHtml();
+    }
+}
+?>
+
+<div class="buttons-set">
+			 <p class="back-link thumb"><a href="javascript:history.go(-1)"><img src="<?php echo $this->getSkinUrl('images/back-thumb.png');?>"/> <?php echo $this->__('Back') ?></a></p>
+</div>

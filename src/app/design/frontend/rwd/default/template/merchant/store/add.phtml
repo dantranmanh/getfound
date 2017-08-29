@@ -1,0 +1,987 @@
+<?php
+    $currentStore = array();
+    if (Mage::registry('merchant_store')) {
+        $currentStore = Mage::registry('merchant_store');
+    }
+	$creditBalance = $this->helper('merchant')->getCreditBalance();
+	
+?>
+<?php  if (!$creditBalance) {   ?>
+	<div class="page-title">
+            <h1><?php echo $this->__('Please Add Credits to your Account Before Adding store or products')?></h1>
+			<a href="<?php echo $this->helper('merchant')->getStoreCreditUrl()?>"> CLICK HERE TO ADD Credits</a>
+         
+    </div>
+<?php }  else { ?>
+<div class="account-create">
+    <div class="page-title">
+        <?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {?>
+            <h1><?php echo $this->__('Edit Merchant Store: '). $currentStore->getStoreName();?></h1>
+        <?php } else { ?>
+        <h1><?php echo $this->__('Create an Merchant Store') ?></h1>
+        <?php } ?>
+    </div>
+    <?php echo $this->getMessagesBlock()->toHtml() ?>
+    <?php /* Extensions placeholder */ ?>
+    <form action="<?php echo $this->getSaveStoreUrl() ?>" method="post" id="form-validate" enctype="multipart/form-data">
+        <div class="fieldset">
+            <input type="hidden" name="form_key" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>" />
+            <?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) { ?>
+            <input type="hidden" name="id" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getId();}?>" />
+            <?php } ?>
+            <h2 class="legend"><?php echo $this->__('Store Information') ?></h2>
+            <ul class="form-list">
+                <li>
+                    <label for="store_name" class="required"><em>*</em><?php echo $this->__('Store Name') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="store_name" id="store_name" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getStoreName();}?>"
+                               title="<?php echo Mage::helper('core')->quoteEscape($this->__('Store Name')) ?>" class="input-text required-entry" />
+                    </div>
+                </li>
+                <li>
+                    <label for="state" class="required"><em>*</em><?php echo $this->__('State') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStateId = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStateId = $currentStore->getStateId();
+                        }
+                        ?>
+                        <select id="state_id" name="state_id" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select State');?></option>
+                            <?php $state = $this->getStateList();?>
+                            <?php
+                                if ($state->count()) {
+                                    foreach($state as $stateInfo) {
+                            ?>
+                                        <option <?php if ($selectedStateId == $stateInfo->getId()) {echo 'selected="selected"';}?> value="<?php echo $stateInfo->getId();?>"><?php echo $stateInfo->getStateName();?></option>
+                            <?php
+                                    }
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="city" class="required"><em>*</em><?php echo $this->__('City') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedCityId = 0;
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedCityId = $currentStore->getCityId();
+                        }
+                        ?>
+                        <select id="city_id" name="city_id" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select City');?></option>
+                        </select>
+                        <input type="hidden" id="hidden_city" name="hidden_city" value="<?php echo $selectedCityId;?>"/>
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Position On listing Page') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="position" id="position" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getPosition();}?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Store Name')) ?>" class="input-text" />
+                    </div>
+                </li>
+                <li>
+                    <label for="status" class="required"><?php echo $this->__('Status') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStatus();
+                        }
+                        ?>
+                        <select id="status" name="status" class="validate-select">
+                            <option value=""><?php echo $this->__('Please Select Status');?></option>
+                            <option value="1" <?php if ($selectedStatus == 1) {echo 'selected="selected"';}?>><?php echo $this->__('Publish');?></option>
+                            <option value="2" <?php if ($selectedStatus == 2) {echo 'selected="selected"';}?>><?php echo $this->__('Unpublish');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Postal Code') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="postal_code" id="postal_code" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getPostalCode();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Postal Code')) ?>" class="input-text" />
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Phone') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="phone" id="phone" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getPhone();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Phone')) ?>" class="input-text" />
+                    </div>
+                </li>
+                <li>
+                    <label for="position" class="required"><?php echo $this->__('Email Address') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="email_address" id="email_address" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getEmailAddress();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Email Address')) ?>" class="required-entry validate-email" />
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Address') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="address" id="address" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getAddress();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Email Address')) ?>" class="input-text" />
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Monday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourMonday();
+                            $selectedStatus = $currentStore->getStoreHourMonday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_monday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_monday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Tuesday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourTuesday();
+                            $selectedStatus = $currentStore->getStoreHourTuesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_tuesday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_tuesday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Wednesday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourWednesday();
+                            $selectedStatus = $currentStore->getStoreHourWednesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_wednesday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_wednesday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Thursday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourWednesday();
+                            $selectedStatus = $currentStore->getStoreHourWednesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_thursday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_thursday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Friday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourWednesday();
+                            $selectedStatus = $currentStore->getStoreHourWednesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_friday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_friday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Saturday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourWednesday();
+                            $selectedStatus = $currentStore->getStoreHourWednesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_sutarday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_sutarday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="status"><?php echo $this->__('Store Hour Sunday') ?></label>
+                    <div class="input-box">
+                        <?php
+                        $selectedStatus = '';
+                        if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            $selectedStatus = $currentStore->getStoreHourWednesday();
+                            $selectedStatus = $currentStore->getStoreHourWednesday1();
+                        }
+                        ?>
+                        <select id="status" name="store_hour_sunday" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                        <select id="status" name="store_hour_sunday1" class="required-entry">
+                            <option value="12.00 AM" <?php if ($selectedStatus == '12.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 AM');?></option>
+                            <option value="12.30 AM" <?php if ($selectedStatus == '12.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 AM');?></option>
+                            <option value="01.00 AM" <?php if ($selectedStatus == '01.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 AM');?></option>
+                            <option value="01.30 AM" <?php if ($selectedStatus == '01.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 AM');?></option>
+                            <option value="02.00 AM" <?php if ($selectedStatus == '02.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 AM');?></option>
+                            <option value="02.30 AM" <?php if ($selectedStatus == '02.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 AM');?></option>
+                            <option value="03.00 AM" <?php if ($selectedStatus == '03.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 AM');?></option>
+                            <option value="03.30 AM" <?php if ($selectedStatus == '03.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 AM');?></option>
+                            <option value="04.00 AM" <?php if ($selectedStatus == '04.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 AM');?></option>
+                            <option value="04.30 AM" <?php if ($selectedStatus == '04.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 AM');?></option>
+                            <option value="05.00 AM" <?php if ($selectedStatus == '05.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 AM');?></option>
+                            <option value="05.30 AM" <?php if ($selectedStatus == '05.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 AM');?></option>
+                            <option value="06.00 AM" <?php if ($selectedStatus == '06.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 AM');?></option>
+                            <option value="06.30 AM" <?php if ($selectedStatus == '06.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 AM');?></option>
+                            <option value="07.00 AM" <?php if ($selectedStatus == '07.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 AM');?></option>
+                            <option value="07.30 AM" <?php if ($selectedStatus == '07.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 AM');?></option>
+                            <option value="08.00 AM" <?php if ($selectedStatus == '08.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 AM');?></option>
+                            <option value="08.30 AM" <?php if ($selectedStatus == '08.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 AM');?></option>
+                            <option value="09.00 AM" <?php if ($selectedStatus == '09.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 AM');?></option>
+                            <option value="09.30 AM" <?php if ($selectedStatus == '09.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 AM');?></option>
+                            <option value="10.00 AM" <?php if ($selectedStatus == '10.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 AM');?></option>
+                            <option value="10.30 AM" <?php if ($selectedStatus == '10.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 AM');?></option>
+                            <option value="11.00 AM" <?php if ($selectedStatus == '11.00 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 AM');?></option>
+                            <option value="11.30 AM" <?php if ($selectedStatus == '11.30 AM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 AM');?></option>
+                            <option value="12.00 PM" <?php if ($selectedStatus == '12.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.00 PM');?></option>
+                            <option value="12.30 PM" <?php if ($selectedStatus == '12.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('12.30 PM');?></option>
+                            <option value="01.00 PM" <?php if ($selectedStatus == '01.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.00 PM');?></option>
+                            <option value="01.30 PM" <?php if ($selectedStatus == '01.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('01.30 PM');?></option>
+                            <option value="02.00 PM" <?php if ($selectedStatus == '02.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.00 PM');?></option>
+                            <option value="02.30 PM" <?php if ($selectedStatus == '02.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('02.30 PM');?></option>
+                            <option value="03.00 PM" <?php if ($selectedStatus == '03.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.00 PM');?></option>
+                            <option value="03.30 PM" <?php if ($selectedStatus == '03.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('03.30 PM');?></option>
+                            <option value="04.00 PM" <?php if ($selectedStatus == '04.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.00 PM');?></option>
+                            <option value="04.30 PM" <?php if ($selectedStatus == '04.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('04.30 PM');?></option>
+                            <option value="05.00 PM" <?php if ($selectedStatus == '05.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.00 PM');?></option>
+                            <option value="05.30 PM" <?php if ($selectedStatus == '05.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('05.30 PM');?></option>
+                            <option value="06.00 PM" <?php if ($selectedStatus == '06.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.00 PM');?></option>
+                            <option value="06.30 PM" <?php if ($selectedStatus == '06.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('06.30 PM');?></option>
+                            <option value="07.00 PM" <?php if ($selectedStatus == '07.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.00 PM');?></option>
+                            <option value="07.30 PM" <?php if ($selectedStatus == '07.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('07.30 PM');?></option>
+                            <option value="08.00 PM" <?php if ($selectedStatus == '08.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.00 PM');?></option>
+                            <option value="08.30 PM" <?php if ($selectedStatus == '08.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('08.30 PM');?></option>
+                            <option value="09.00 PM" <?php if ($selectedStatus == '09.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.00 PM');?></option>
+                            <option value="09.30 PM" <?php if ($selectedStatus == '09.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('09.30 PM');?></option>
+                            <option value="10.00 PM" <?php if ($selectedStatus == '10.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.00 PM');?></option>
+                            <option value="10.30 PM" <?php if ($selectedStatus == '10.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('10.30 PM');?></option>
+                            <option value="11.00 PM" <?php if ($selectedStatus == '11.00 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.00 PM');?></option>
+                            <option value="11.30 PM" <?php if ($selectedStatus == '11.30 PM') {echo 'selected="selected"';}?>><?php echo $this->__('11.30 PM');?></option>
+                            <option value="Closed" <?php if ($selectedStatus == 'Closed') {echo 'selected="selected"';}?>><?php echo $this->__('Closed');?></option>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="position" class="required"><?php echo $this->__('Paypal Email Address') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="paypal_information" id="paypal_information" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getPaypalInformation();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Paypal Email Address')) ?>" class="required-entry validate-email" />
+                    </div>
+                </li>
+				<li>
+                    <label for="storeurl" class="required"><?php echo $this->__('Store Url') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="store_url" id="store_url" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getStoreUrl();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Store Url')) ?>" class="input-text required-entry" />
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Keyword') ?></label>
+                    <div class="input-box">
+                        <input type="text" name="keyword" id="keyword" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getKeyword();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Keyword')) ?>" class="input-text" />
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Description') ?></label>
+                    <div class="input-box">
+                        <textarea rows="5" cols="20" name="description" id="description" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Description')) ?>" class="input-text"><?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getDescription();} ?></textarea>
+
+                    </div>
+                </li>
+                <li>
+                    <label for="position"><?php echo $this->__('Image Of Store') ?></label>
+                    <div class="input-box">
+                        <?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {
+                            ?>
+                           <img src="<?php echo $currentStore->getImageOfStore();?>" width="30px" height="30px">
+                       <?php } ?><br /><input type="file" name="image_of_store" id="image_of_store" value="<?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {echo $currentStore->getImageOfStore();} ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Image Of Store')) ?>" class="input-text" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="fieldset">
+            <h2 class="legend"><?php echo $this->__('Categories') ?></h2>
+            <ul id="wk_bodymain" class="form-list">
+                <li>
+                    <?php echo $this->getChildHtml('category_tree');?>
+                </li>
+            </ul>
+        </div>
+        <div class="buttons-set">
+            <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+            <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>" class="back-link"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+            <button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Submit')) ?>" class="button"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+        </div>
+    </form>
+    <script type="text/javascript">
+    //<![CDATA[
+        var dataForm = new VarienForm('form-validate', true);
+        var storeCreator = new storeCreator('<?php echo $this->getCityUrl(); ?>', 'city_id', 'state_id', 'hidden_city');
+    <?php if (!empty($currentStore) && $currentStore instanceof Location_Store_Model_Store) {?>
+        jQuery(document).ready(function(){
+            storeCreator.getCity();
+        })
+    <?php } ?>
+    //]]>
+    </script>
+</div>
+	<?php } ?>

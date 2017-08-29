@@ -1,0 +1,112 @@
+<?php
+//echo "Ccategory is coming";
+$categoryCollection = $this->getCategoryCollection();
+$stateInfo = $this->getState();
+
+//$stateId = $stateInfo->getId();
+$cityInfo = $this->getCityById();
+
+        echo $this->getCssJsHtml();
+        ?>
+		<div style="margin-top:-30px;margin-bottom:12px;"><img src="<?php echo $this->getSkinUrl('images/city_msg.png'); ?>"></div>
+        <div>
+			<ul>
+                <li>
+					<h3>
+					<?php 
+						$breadcrumbs = $this->getLayout()->getBlock('breadcrumbs');
+						$breadcrumbs->addCrumb('home', array('label'=>Mage::helper('cms')->__('Home'), 'title'=>Mage::helper('cms')->__('Home Page'), 'link'=>Mage::getBaseUrl()));
+						$breadcrumbs->addCrumb('state', array('label'=> $stateInfo->getStateName(), 'title'=>$stateInfo->getStateName(), 'link'=>Mage::getBaseUrl().$stateInfo->getStateUrl()));
+						$breadcrumbs->addCrumb('city', array('label'=>$cityInfo->getCityName(), 'title'=>$cityInfo->getCityName()));
+						echo $this->getLayout()->getBlock('breadcrumbs')->toHtml(); ?>
+					</h3> 
+				</li>
+			</ul>
+        </div>
+        <div class="stateinfo">
+            <ul>
+                <li><h1><a href="<?php echo Mage::getBaseUrl().$stateInfo->getStateUrl(); ?>"><?php echo $stateInfo->getStateName(); ?></a></h1></li>
+                <li>&nbsp;</li>
+                <li><a href="<?php echo Mage::getBaseUrl().$stateInfo->getStateUrl(); ?>"><img src="<?php echo $stateInfo->getStateImageName(); ?>" ></a></li>
+            </ul>
+        </div>
+		
+		<div><a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/A">A</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/B">B</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/C">C</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/D">D</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/E">E</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/F">F</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/G">G</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/H">H</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/I">I</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/J">J</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/K">K</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/L">L</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/M">M</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/N">N</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/O">O</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/P">P</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/Q">Q</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/R">R</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/S">S</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/T">T</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/U">U</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/V">V</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/W">W</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/X">X</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/Y">Y</a>&nbsp;<a href="<?php echo Mage::getBaseUrl();?>locationcity/index/sortcat/id/<?php echo $stateInfo->getId(); ?>/filter/Z">Z</a></div>
+		
+<?php
+if ($categoryCollection) {
+    if ($categoryCollection->count() > 0) {
+		
+?>
+        <div class="category_list">
+		
+		     <table>
+			 <tr>
+					<?php
+					$stateId = $stateInfo->getId();   
+					 $citySelectId = $cityInfo->getId(); 
+						 $i = 0;
+						 foreach($categoryCollection as $category){						   
+						   $categorySelectId = $category->getId();
+						    if(!Mage::getSingleton('customer/session')->isLoggedIn()){		
+								
+								 $storeByCat = $this->getCategoryByCityStoreCollection($stateId);
+								 
+								     $storeCityId = $storeByCat[0][categories];					
+							         $catArray = explode(',',$storeCityId);
+									 
+							        if($i % 6 === 0) {
+										echo '</tr><tr>';
+									}
+																	
+									if (in_array($categorySelectId, $catArray)) {	
+													 
+									  echo "<td ><a href=".$this->getCategoryStoreUrl($category->getId(), $stateId)." style=\"padding:0px 5px 5px 0px;background-color:green;color:#fff!important;border-right:2px solid #fff;\">".$category->getName()."</a></td>";
+									} else {
+									 
+									  echo "<td ><a href=".$this->getCategoryStoreUrl($category->getId(), $stateId)." style=\"padding:0px 5px 5px 0px;\">".$category->getName()."</a></td>";
+									}  
+									
+																
+							}else{												
+								$customer_data = Mage::getSingleton('customer/session')->getCustomer();								
+								$merchantId = $customer_data->getId();
+								$storeByCat = $this->getCategoryByCityMerchantStoreCollection($stateId, $merchantId);
+								
+								 $storeCityId = $storeByCat[0][categories];					
+							         $catArray = explode(',',$storeCityId);
+							        if($i % 6 === 0) {
+										echo '</tr><tr>';
+									}									
+									if (in_array($categorySelectId, $catArray)) {
+													 
+									  echo "<td style=\"padding:0px 5px 5px 0px;background-color:green;color:#000000!important;\"><a href=".$this->getCategoryStoreUrl($category->getId(), $stateId).">".$category->getName()."</a></td>";
+									} else {
+									
+									 echo "<td style=\"padding:0px 5px 5px 0px;\"><a href=".$this->getCategoryStoreUrl($category->getId(), $stateId).">".$category->getName()."</a></td>";
+									}  
+							} 
+						    
+						  $i++;
+					 ?>
+					<?php } ?>
+			 </tr>
+			 </table>
+			 
+            <ul>
+                <?php foreach($categoryCollection as $category){ ?>
+                    <li><a href="<?php echo $this->getCategoryStoreUrl($category->getId(), $stateId);?>"><?php //echo $category->getName();?></a></li>
+                <?php } ?>
+            </ul>
+        </div>
+        <?php
+    } else {
+?>
+<div style="margin-top:50px;">No category found for selected city.</div>
+<?php
+  }	
+}
+?>
+ <div class="buttons-set">
+			 <p class="back-link thumb"><a href="javascript:history.go(-1)"><img src="<?php echo $this->getSkinUrl('images/back-thumb.png');?>"/> <?php echo $this->__('Back') ?></a></p>
+</div>

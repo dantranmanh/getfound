@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <state>
+            <children>
+                <merchant_payment translate="title" module="merchant">
+                    <title>Manage Merchant Payment</title>
+                    <action>merchant/admin_payment</action>
+                    <sort_order>60</sort_order>
+                </merchant_payment>
+                <merchant_payment_grid translate="title" module="merchant">
+                    <title>Merchant Payment Grid</title>
+                    <action>merchant/admin_paymentgrid</action>
+                    <sort_order>65</sort_order>
+                </merchant_payment_grid>
+            </children>
+        </state>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <merchant_setting translate="title" module="merchant">
+                                        <title>Merchant Configuration</title>
+                                        <sort_order>195</sort_order>
+                                    </merchant_setting>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                    <state>
+                        <children>
+                            <merchant_payment translate="title" module="merchant">
+                                <title>Manage State</title>
+                                <sort_order>60</sort_order>
+                            </merchant_payment>
+                        </children>
+                    </state>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

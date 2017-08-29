@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <adaptivepayments translate="label" module="adaptivepayments">
+            <label>Payments Settings</label>
+            <tab>merchant</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>100</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>0</show_in_store>
+            <groups>
+                <api translate="label">
+                    <label>API Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <username translate="label">
+                            <label>Api Username</label>
+                            <frontend_type>obscure</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </username>
+                        <password translate="label">
+                            <label>Api Password</label>
+                            <sort_order>20</sort_order>
+                            <frontend_type>obscure</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </password>
+                        <signature translate="label">
+                            <label>Api Signature</label>
+                            <sort_order>30</sort_order>
+                            <frontend_type>obscure</frontend_type>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </signature>
+                        <senderemail translate="label">
+                            <label>Email Associated with PayPal Merchant Account</label>
+                            <comment><![CDATA[<a href="http://www.magentocommerce.com/paypal">Start accepting payments via PayPal!</a>]]></comment>
+                            <tooltip>Don't have a PayPal account? Simply enter your email address.</tooltip>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-email</validate>
+                        </senderemail>
+                        <appid translate="label">
+                            <label>Api App Id</label>
+                            <frontend_type>obscure</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </appid>
+                        <sandbox_flag translate="label">
+                            <label>Sandbox Mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sandbox_flag>
+                        <sandbox_endpoint translate="label">
+                            <label>Sandbox Api Endpoint</label>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sandbox_endpoint>
+                        <live_endpoint translate="label">
+                            <label>Live Api Endpoint</label>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </live_endpoint>
+                    </fields>
+                </api>
+
+                
+            </groups>
+        </adaptivepayments>
+    </sections>
+</config>

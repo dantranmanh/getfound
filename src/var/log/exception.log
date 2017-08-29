@@ -1,0 +1,64 @@
+2017-08-25T19:31:22+00:00 ERR (3): 
+exception 'Mage_Core_Exception' with message 'Invalid block type: Mage_Merchantgrid_Block_Admin_Paymentgrid_Grid' in /var/www/m1/getfound/src/app/Mage.php:596
+Stack trace:
+#0 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(495): Mage::throwException('Invalid block t...')
+#1 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(437): Mage_Core_Model_Layout->_getBlockInstance('merchantgrid/ad...', Array)
+#2 /var/www/m1/getfound/src/app/code/core/Mage/Adminhtml/Block/Widget/Grid/Container.php(66): Mage_Core_Model_Layout->createBlock('merchantgrid/ad...', 'admin_paymentgr...')
+#3 /var/www/m1/getfound/src/app/code/core/Mage/Core/Block/Abstract.php(293): Mage_Adminhtml_Block_Widget_Grid_Container->_prepareLayout()
+#4 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(456): Mage_Core_Block_Abstract->setLayout(Object(Mage_Core_Model_Layout))
+#5 /var/www/m1/getfound/src/app/code/local/Location/Merchant/controllers/Admin/PaymentgridController.php(9): Mage_Core_Model_Layout->createBlock('merchant/admin_...', 'payment_grid_co...')
+#6 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Action.php(418): Location_Merchant_Admin_PaymentgridController->indexAction()
+#7 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Router/Standard.php(254): Mage_Core_Controller_Varien_Action->dispatch('index')
+#8 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Front.php(172): Mage_Core_Controller_Varien_Router_Standard->match(Object(Mage_Core_Controller_Request_Http))
+#9 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/App.php(365): Mage_Core_Controller_Varien_Front->dispatch()
+#10 /var/www/m1/getfound/src/app/Mage.php(685): Mage_Core_Model_App->run(Array)
+#11 /var/www/m1/getfound/src/index.php(83): Mage::run('', 'store')
+#12 {main}
+2017-08-25T19:31:35+00:00 ERR (3): 
+exception 'Mage_Core_Exception' with message 'Invalid block type: Mage_Merchantgrid_Block_Admin_Paymentgrid_Grid' in /var/www/m1/getfound/src/app/Mage.php:596
+Stack trace:
+#0 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(495): Mage::throwException('Invalid block t...')
+#1 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(437): Mage_Core_Model_Layout->_getBlockInstance('merchantgrid/ad...', Array)
+#2 /var/www/m1/getfound/src/app/code/core/Mage/Adminhtml/Block/Widget/Grid/Container.php(66): Mage_Core_Model_Layout->createBlock('merchantgrid/ad...', 'admin_paymentgr...')
+#3 /var/www/m1/getfound/src/app/code/core/Mage/Core/Block/Abstract.php(293): Mage_Adminhtml_Block_Widget_Grid_Container->_prepareLayout()
+#4 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(456): Mage_Core_Block_Abstract->setLayout(Object(Mage_Core_Model_Layout))
+#5 /var/www/m1/getfound/src/app/code/local/Location/Merchant/controllers/Admin/PaymentgridController.php(9): Mage_Core_Model_Layout->createBlock('merchant/admin_...', 'payment_grid_co...')
+#6 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Action.php(418): Location_Merchant_Admin_PaymentgridController->indexAction()
+#7 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Router/Standard.php(254): Mage_Core_Controller_Varien_Action->dispatch('index')
+#8 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Front.php(172): Mage_Core_Controller_Varien_Router_Standard->match(Object(Mage_Core_Controller_Request_Http))
+#9 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/App.php(365): Mage_Core_Controller_Varien_Front->dispatch()
+#10 /var/www/m1/getfound/src/app/Mage.php(685): Mage_Core_Model_App->run(Array)
+#11 /var/www/m1/getfound/src/index.php(83): Mage::run('', 'store')
+#12 {main}
+2017-08-25T19:31:44+00:00 ERR (3): 
+exception 'Mage_Core_Exception' with message 'Invalid block type: Mage_Merchantgrid_Block_Admin_Paymentgrid_Grid' in /var/www/m1/getfound/src/app/Mage.php:596
+Stack trace:
+#0 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(495): Mage::throwException('Invalid block t...')
+#1 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(437): Mage_Core_Model_Layout->_getBlockInstance('merchantgrid/ad...', Array)
+#2 /var/www/m1/getfound/src/app/code/core/Mage/Adminhtml/Block/Widget/Grid/Container.php(66): Mage_Core_Model_Layout->createBlock('merchantgrid/ad...', 'admin_paymentgr...')
+#3 /var/www/m1/getfound/src/app/code/core/Mage/Core/Block/Abstract.php(293): Mage_Adminhtml_Block_Widget_Grid_Container->_prepareLayout()
+#4 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(456): Mage_Core_Block_Abstract->setLayout(Object(Mage_Core_Model_Layout))
+#5 /var/www/m1/getfound/src/app/code/local/Location/Merchant/controllers/Admin/PaymentgridController.php(9): Mage_Core_Model_Layout->createBlock('merchant/admin_...', 'paymentgrid_gri...')
+#6 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Action.php(418): Location_Merchant_Admin_PaymentgridController->indexAction()
+#7 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Router/Standard.php(254): Mage_Core_Controller_Varien_Action->dispatch('index')
+#8 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Front.php(172): Mage_Core_Controller_Varien_Router_Standard->match(Object(Mage_Core_Controller_Request_Http))
+#9 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/App.php(365): Mage_Core_Controller_Varien_Front->dispatch()
+#10 /var/www/m1/getfound/src/app/Mage.php(685): Mage_Core_Model_App->run(Array)
+#11 /var/www/m1/getfound/src/index.php(83): Mage::run('', 'store')
+#12 {main}
+2017-08-25T19:39:23+00:00 ERR (3): 
+exception 'Mage_Core_Exception' with message 'Invalid block type: Mage_Merchantgrid_Block_Admin_Paymentgrid_Grid' in /var/www/m1/getfound/src/app/Mage.php:596
+Stack trace:
+#0 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(495): Mage::throwException('Invalid block t...')
+#1 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(437): Mage_Core_Model_Layout->_getBlockInstance('merchantgrid/ad...', Array)
+#2 /var/www/m1/getfound/src/app/code/core/Mage/Adminhtml/Block/Widget/Grid/Container.php(66): Mage_Core_Model_Layout->createBlock('merchantgrid/ad...', 'admin_paymentgr...')
+#3 /var/www/m1/getfound/src/app/code/core/Mage/Core/Block/Abstract.php(293): Mage_Adminhtml_Block_Widget_Grid_Container->_prepareLayout()
+#4 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/Layout.php(456): Mage_Core_Block_Abstract->setLayout(Object(Mage_Core_Model_Layout))
+#5 /var/www/m1/getfound/src/app/code/local/Location/Merchant/controllers/Admin/PaymentgridController.php(9): Mage_Core_Model_Layout->createBlock('merchant/admin_...', 'paymentgrid_gri...')
+#6 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Action.php(418): Location_Merchant_Admin_PaymentgridController->indexAction()
+#7 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Router/Standard.php(254): Mage_Core_Controller_Varien_Action->dispatch('index')
+#8 /var/www/m1/getfound/src/app/code/core/Mage/Core/Controller/Varien/Front.php(172): Mage_Core_Controller_Varien_Router_Standard->match(Object(Mage_Core_Controller_Request_Http))
+#9 /var/www/m1/getfound/src/app/code/core/Mage/Core/Model/App.php(365): Mage_Core_Controller_Varien_Front->dispatch()
+#10 /var/www/m1/getfound/src/app/Mage.php(685): Mage_Core_Model_App->run(Array)
+#11 /var/www/m1/getfound/src/index.php(83): Mage::run('', 'store')
+#12 {main}

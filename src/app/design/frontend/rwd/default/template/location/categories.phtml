@@ -1,0 +1,32 @@
+<?php
+//echo "City Is Coming";
+$cityInfo = $this->getCityInformation();
+$stateInfo = $this->getStateInformation();
+$catNameVal = $this->getCategoryInfo();
+
+//echo "<pre>"; var_dump($catInformation); echo "</pre>";
+//print_r($catInformation);
+
+    echo $this->getCssJsHtml();
+?>
+    <div >
+    <ul>
+        <li><h3 style="text-transform: capitalize;"><?php echo $stateInfo->getStateName(); ?> / <?php echo $cityInfo->getCityName(); ?></h3> </li>
+    </ul>
+    </div>
+    <div class="stateinfo">
+        <ul>
+            <li><h1><?php echo $stateInfo->getStateName(); ?></h1></li>
+            <li>&nbsp;</li>
+            <li><img src="<?php echo $stateInfo->getStateImageName(); ?>" ></li>
+        </ul>
+    </div>
+    <div class="city_list">
+      <?php echo $catNameVal; ?>
+    </div>
+			<div class="buttons-set">
+			 <p class="back-link thumb"><a href="javascript:history.go(-1)"><img src="<?php echo $this->getSkinUrl('images/back-thumb.png');?>"/> <?php echo $this->__('Back') ?></a></p>
+			</div>
+    <?php
+
+?>

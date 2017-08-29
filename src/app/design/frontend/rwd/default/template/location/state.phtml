@@ -1,0 +1,21 @@
+<?php
+//echo "Block Is working";
+$stateCollection = $this->getStateCollection();
+
+?>
+<?php if($stateCollection->count() > 0 ) { ?>
+<div class="state_list">
+    <ul>
+        <?php
+           echo $this->getCssJsHtml();
+           foreach($stateCollection as $state){ ?>
+               <li><a href="<?php echo $state->getStateUrl();?>"><img title="<?php echo $state->getStateName(); ?>" src="<?php echo $state->getStateImageName(); ?>" width="85px"></a></li>
+        <?php
+           }
+        ?>
+
+    </ul>
+
+</div>
+<?php } ?>
+<div class="img_shopper"></div>

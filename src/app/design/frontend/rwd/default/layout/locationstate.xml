@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <state_index_index>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="state/state" name="state_list1" as="state_list1"  />
+        </reference>
+    </state_index_index>
+    <state_index_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="city/list" name="city_list" as="city_list"/>
+        </reference>
+    </state_index_view>
+	  <city_index_sort>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="city/sort" name="city_list1" as="city_list1"/>
+        </reference>
+    </city_index_sort>
+	<city_index_sortcat>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="city/sortcat" name="city_list2" as="city_list2"/>
+        </reference>
+    </city_index_sortcat>
+    <city_index_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="city/view" name="city_view" as="city_view"/>
+        </reference>
+    </city_index_view>
+	<city_index_notactive>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="city/notactive" name="notactive" as="notactive"/>
+        </reference>
+    </city_index_notactive>
+    <store_store_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/store" name="store_list" as="store_list" template="location/store.phtml" />
+        </reference>
+    </store_store_view>
+
+    <store_index_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/list" name="store_list" as="store_list" />
+        </reference>
+    </store_index_view>
+    <store_product_view>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-left.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="store/product" name="product_list" as="product_list" />
+            <action method="setColumnCount">
+                <coulumn>3</coulumn>
+            </action>
+        </reference>
+    </store_product_view>
+</layout>

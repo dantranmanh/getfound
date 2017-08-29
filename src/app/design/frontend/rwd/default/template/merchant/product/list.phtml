@@ -1,0 +1,73 @@
+<?php
+	$creditBalance = Mage::helper('merchant')->getCreditBalance();
+?>
+<?php  if (!$creditBalance) {   ?>
+	<div class="page-title">
+            <h1><?php echo $this->__('Please Add Credits to your Account Before Adding store or products')?></h1>
+			<a href="<?php echo $this->helper('merchant')->getStoreCreditUrl()?>"> CLICK HERE TO ADD CREDITS</a>
+         
+    </div>
+<?php }  else { ?>
+<div class="page-title">
+    <h1><?php echo $this->__('My Products') ?></h1>
+    <div class="buttons-set">
+        <button id="add_product" name="add_product" title="Add Product" class="button" type="button"
+                onclick="window.location.href = '<?php echo $this->getAddProductUrl();?>'">
+            <span><span><?php echo $this->__('Add Product');?>
+                </span></span>
+        </button>
+    </div>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php $_products = $this->getProducts(); ?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($_products->getSize()): ?>
+    <table class="data-table" id="my-products-table">
+        <col width="1" />
+        <col width="1" />
+        <col />
+        <col width="1" />
+        <col width="1" />
+        <col width="1" />
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Product Name') ?></th>
+            <th><?php echo $this->__('SKU') ?></th>
+            <th><?php echo $this->__('Store Name') ?></th>
+            <th><?php echo $this->__('Status') ?></th>
+            <th><?php echo $this->__('Inventory') ?></th>
+            <th>&nbsp;</th>
+            <th><?php echo $this->__('Delete') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($_products as $_product):
+				$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product);
+				
+		?>
+					
+            <tr>
+                <td><?php echo $_product->getName(); ?></td>
+                <td><?php echo $_product->getSku(); ?></td>
+                <td><?php echo $_product->getSku(); ?></td>
+                <td><?php echo $this->formatStatus($_product->getStatus()); ?></td>
+                <td><?php echo intval($stock->getQty()); ?></td>
+                <td class="a-center">
+                <span class="nobr"><a href="<?php echo $this->getEditUrl($_product->getId()) ?>"><?php echo $this->__('Edit Product') ?></a>
+                </span>
+                </td>
+				<td class="a-center">
+                <span class="nobr"><a href="<?php echo $this->getDeleteUrl($_product->getId()) ?>"><?php echo $this->__('Delete Product') ?></a>
+                </span>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-products-table');</script>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have created no products.'); ?></p>
+<?php endif ?>
+<?php }  ?>

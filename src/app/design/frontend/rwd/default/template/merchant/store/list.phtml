@@ -1,0 +1,70 @@
+<?php
+	$creditBalance = $this->helper('merchant')->getCreditBalance();
+?>
+<?php  if (!$creditBalance) {   ?>
+	<div class="page-title">
+            <h1><?php echo $this->__('Please Add Credits to your Account Before Adding store or products')?></h1>
+			<a href="<?php echo $this->helper('merchant')->getStoreCreditUrl()?>"> CLICK HERE TO ADD CREDITS</a>
+         
+    </div>
+<?php }  else { ?>
+<div class="page-title">
+    <h1><?php echo $this->__('My Stores') ?></h1>
+    <div class="buttons-set">
+        <button id="add_store" name="add_store" title="Add Store" class="button" type="button"
+                onclick="window.location.href = '<?php echo $this->getAddStoreUrl();?>'">
+            <span><span><?php echo $this->__('Add Store');?>
+                </span></span>
+        </button>
+    </div>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php $_stores = $this->getStores(); ?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($_stores->getSize()): ?>
+    <table class="data-table" id="my-stores-table">
+        <col width="1" />
+        <col width="1" />
+        <col />
+        <col width="1" />
+        <col width="1" />
+        <col width="1" />
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Store Name') ?></th>
+            <th><span class="nobr"><?php echo $this->__('State') ?></span></th>
+            <th><span class="nobr"><?php echo $this->__('City') ?></span></th>
+            <th><?php echo $this->__('Status') ?></th>
+            <th><span class="nobr"><?php echo $this->__('Position') ?></span></th>
+           
+            <th>&nbsp;</th>
+			<th><span class="a-center"><?php echo $this->__('Delete') ?></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($_stores as $_store): ?>
+            <tr>
+                <td><?php echo $_store->getStoreName(); ?></td>
+                <td><span class="nobr"><?php echo $this->getStateName($_store->getStateId()); ?></span></td>
+                <td><span class="nobr"><?php echo $this->getCityName($_store->getCityId()); ?></span></td>
+                <td><?php echo $this->formatStatus($_store->getStatus()); ?></td>
+                <td><?php echo $_store->getPosition(); ?></td>
+				<td class="a-center">
+                <span class="nobr"><a href="<?php echo $this->getEditUrl($_store->getId()) ?>"><?php echo $this->__('Edit Store') ?></a>
+                </span>
+                </td>
+                <td class="">
+                <span class="nobr"><a href="<?php echo $this->getDeleteUrl($_store->getId()) ?>"><?php echo $this->__('Delete Store') ?></a>
+                </span>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-stores-table');</script>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have created no stores.'); ?></p>
+<?php endif ?>
+<?php }  ?>

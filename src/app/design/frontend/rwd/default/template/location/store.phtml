@@ -1,0 +1,33 @@
+<?php
+//echo "State Is working";
+$stateInfo = $this->getStateInformation();
+$stateInformation = $this->getStoreInfo();
+
+
+if(($stateInformation->count()) > 0){
+    echo $this->getCssJsHtml();
+
+    ?>
+    <div class="stateinfo">
+        <ul>
+            <li><h1><?php echo $stateInfo->getStateName(); ?></h1></li>
+            <li>&nbsp;</li>
+            <li><img src="<?php echo $stateInfo->getStateImageName(); ?>" ></li>
+        </ul>
+    </div>
+    <div class="city_list">
+        <ul>
+            <li><h1>Store List</h1></li>
+            <?php foreach($stateInformation as $storeIn){ ?>
+                <li><?php echo $storeIn->getStoreName(); ?></li>
+            <?php } ?>
+        </ul>
+    </div>
+
+<?php
+}
+?>
+<div class="buttons-set">
+			 <p class="back-link thumb"><a href="javascript:history.go(-1)"><img src="<?php echo $this->getSkinUrl('images/back-thumb.png');?>"/> <?php echo $this->__('Back') ?></a></p>
+</div>
+

@@ -1,0 +1,97 @@
+<?php
+$currentStoreCategories = array();
+if (Mage::registry('merchant_store') && Mage::registry('merchant_store') instanceof Location_Store_Model_Store) {
+    $currentStoreCategories = explode(',', Mage::registry('merchant_store')->getCategories());
+}
+?>
+<div class="wk_field wk_category">
+    <div class="wk_for_validation">
+        <?php
+        $Mar_lef = 0;$count = 0;
+        $category_helper = Mage::helper("catalog/category");
+        $category_model = Mage::getModel("catalog/category");
+        $_categories = $category_helper->getStoreCategories();
+        $margin = '20';
+        $multiplier = 1;
+        foreach($_categories as $_category)	{
+            $count++;
+            $categoryInfo = $category_model->load($_category['entity_id']);
+            if(count($category_model->getResource()->getAllChildren($categoryInfo))-1 > 0){ ?>
+                <div class="wk_cat_container" style="margin-left:0px;">
+                    <span class="wk_plus"  data-container="cat_<?php echo $categoryInfo->getId()?>">+</span><span class="wk_foldersign"></span>
+                    <span class="wk_elements wk_cat_name"><?php echo $_category->getName() ?></span>
+                    <input <?php if(in_array($_category->getId(),$currentStoreCategories)) {echo 'checked="checked"';}?> class="wk_elements" type="checkbox" name="categories[]" value='<?php echo $_category['entity_id'] ?>'/>
+                </div>
+                <?php
+                $children = $categoryInfo->getChildren();
+                $all = explode(",",$children);
+                    $resultTree = "";
+                    $count = 1;
+                    $total = count($all);
+                    $plus = 0;
+                    foreach($all as $each){
+                        $count++;
+                        $_childCategory = $category_model->load($each);
+                ?>
+                        <div class="wk_removable wk_cat_container cat_<?php echo $_category->getId() ?>" style="display:none;margin-left:<?php echo $margin;?>px;">
+                            <?php if(count($category_model->getResource()->getAllChildren($_childCategory))-1 > 0) {
+                                echo '<span class="wk_plus" data-container="cat_'.$_childCategory->getId().'">+</span>';
+                            }?>
+                            <span  class="wk_no"></span>
+                            <span class="wk_foldersign"></span>
+                            <span class="wk_elements wk_cat_name"><?php echo $_childCategory->getName()?></span>
+                            <input <?php if(in_array($_childCategory->getId(),$currentStoreCategories)) {echo 'checked="checked"';}?> class="wk_elements" type="checkbox" name="categories[]" value='<?php echo $_childCategory->getId()?>'>
+                        </div>
+                <?php
+                        if(count($category_model->getResource()->getAllChildren($_childCategory))-1 > 0) {
+
+                            $childrenChild = $_childCategory->getChildren();
+                            $all = explode(",", $childrenChild);
+                            $resultTree = "";
+                            $count = 1;
+                            $total = count($all);
+                            $plus = 0;
+                            foreach ($all as $each) {
+                                $count++;
+                                $_childChildCategory = $category_model->load($each);
+                                ?>
+                                <div class="wk_removable wk_cat_container cat_<?php echo $_childCategory->getId() ?>"
+                                     style="display:none; margin-left:<?php echo $margin*2; ?>px;">
+                                    <span class="wk_no"></span>
+                                    <span class="wk_foldersign"></span>
+                                    <span
+                                        class="wk_elements wk_cat_name"><?php echo $_childChildCategory->getName() ?></span>
+                                    <input <?php if(in_array($_childChildCategory->getId(),$currentStoreCategories)) {echo 'checked="checked"';}?> class="wk_elements" type="checkbox" name="categories[]"
+                                           value='<?php echo $_childChildCategory->getId() ?>'>
+                                </div>
+                                <?php
+                            }
+                        }
+                    }?>
+                <?php
+            }else { ?>
+                <div class="wk_cat_container">
+                    </span><span class="wk_foldersign"></span>
+                    <span class="wk_elements wk_cat_name"><?php echo $_category->getName() ?></span>
+                    <input <?php if(in_array($_category->getId(),$currentStoreCategories)) {echo 'checked="checked"';}?> class="wk_elements" type="checkbox" name="categories[]" value='<?php echo $_category['entity_id'] ?>'/>
+                </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('.wk_plus').click(function(){
+            if (jQuery(this).hasClass('active') && this.getAttribute('data-container')) {
+                jQuery('.'+this.getAttribute('data-container')).hide();
+                jQuery(this).removeClass('active');
+            } else if(this.getAttribute('data-container')) {
+                jQuery('.'+this.getAttribute('data-container')).show();
+                jQuery(this).addClass('active');
+            }
+
+        });
+    });
+</script>

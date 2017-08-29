@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<config>
+	<tabs>
+		<state translate="label" module="state">
+			<label>Location</label>
+			<sort_order>100</sort_order>
+		</state>
+	</tabs>
+	<sections>
+		<state translate="label" module="state">
+			<label>State List</label>
+			<sort_order>10</sort_order>
+			<tab>state</tab>
+			<frontend_type>text</frontend_type>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+			<groups>
+				<general_settings translate="label" module="state">
+					<label>General Setting</label>
+					<sort_order>10</sort_order>
+					<frontend_type>text</frontend_type>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<is_enable>
+							<label>Enable</label>
+							<sort_order>10</sort_order>
+							<frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</is_enable>
+					</fields>
+				</general_settings>
+			</groups>
+		</state>
+		<city translate="label" module="city">
+			<label>City List</label>
+			<sort_order>20</sort_order>
+			<tab>city</tab>
+			<frontend_type>text</frontend_type>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<general_settings translate="label" module="city">
+					<label>General Setting</label>
+					<sort_order>10</sort_order>
+					<frontend_type>text</frontend_type>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<is_enable>
+							<label>Enable</label>
+							<sort_order>10</sort_order>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</is_enable>
+					</fields>
+				</general_settings>
+			</groups>
+		</city>
+	</sections>
+
+</config>

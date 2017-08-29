@@ -1,0 +1,41 @@
+<div class="page-title">
+    <h1><?php echo $this->__('My Credits History') ?></h1>
+    <div class="buttons-set">
+        <div>
+            <h2><?php echo $this->__('Total Credit Balance : ') ?>
+                <?php echo $this->getTotalCreditValue(); ?></h2>
+        </div>
+    </div>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php $_creditHistory = $this->getCreditHistory(); ?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($_creditHistory->getSize()): ?>
+    <table class="data-table" id="my-credit-history-table">
+        <col width="1" />
+        <col width="1" />
+        <col />
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Order Numner') ?></th>
+            <th><span class="nobr"><?php echo $this->__('Credit Transfer') ?></span></th>
+            <th><span class="nobr"><?php echo $this->__('Message') ?></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($_creditHistory as $_history): ?>
+            <tr>
+                <td><?php echo $_history->getOrderIncrementId(); ?></td>
+                <td><?php echo $_history->getCredit(); ?></td>
+                <td><?php echo $_history->getMessage(); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-credit-history-table');</script>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have no credit history records.'); ?></p>
+<?php endif ?>
+

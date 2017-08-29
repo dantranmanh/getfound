@@ -1,0 +1,53 @@
+<div class="page-title">
+    <h1><?php echo $this->__('Manage Orders') ?></h1>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php $merchantOrders = $this->getMerchantOrders();?>
+<?php $merchantHelper = $this->helper('merchant');?>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($merchantOrders->getSize()): ?>
+    <table class="data-table" id="my-orders-table">
+        <col width="1" />
+        <col/>
+        <col />
+        <col/>
+        <col/>
+        <col width="1" />
+        <thead>
+        <tr>
+            <th><?php echo $this->__('Order Number') ?></th>
+            <th><?php echo $this->__('Store Name') ?></th>
+            <th><?php echo $this->__('Customer Name') ?></th>
+            <th><?php echo $this->__('Order Total') ?></th>
+            <th><?php echo $this->__('Status') ?></th>
+            <th><?php echo $this->__('Action') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($merchantOrders as $merchantOrder): ?>
+            <tr>
+                <td><?php echo $merchantOrder->getIncrementId(); ?></td>
+                <td><?php echo $merchantOrder->getStoreName(); ?></td>
+                <td><?php echo $merchantOrder->getCustomerFirstname().' '.$merchantOrder->getCustomerLastname(); ?></td>
+                <td><?php echo $merchantOrder->getOrderTotal(); ?></td>
+                <td><?php echo $merchantHelper->getMerchantOrderStatus($merchantOrder); ?></td>
+                <td>
+                    <a href="<?php echo Mage::getUrl('merchant/order/view/', array('id' => $merchantOrder->getOrderId(), 'merchant_store'=>$merchantOrder->getMerchantStore())) ?>"
+                       class="btn btn-primary"><?php echo $this->__('View'); ?></a>
+                    <?php if(!$this->isFullyShipped($merchantOrder->getOrderId(), $merchantOrder->getMerchantStore()) && $merchantOrder->getState() != 'canceled' &&
+                        $merchantOrder->getShippingAddress() && !(($merchantOrder->getQtyCanceled()*1) == $merchantOrder->getQtyOrdered())): ?>
+                        <a href="<?php echo Mage::getUrl('merchant/shipment/create/', array('id' =>
+                            $merchantOrder->getOrderId())) ?>" class="btn btn-primary btn-success"><?php echo $this->__('Ship'); ?></a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-orders-table');</script>
+    <?php echo $this->getPagerHtml(); ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have no orders.'); ?></p>
+<?php endif ?>
+
