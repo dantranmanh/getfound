@@ -429,20 +429,6 @@ class Mage_Paypal_Model_Config
         $value = Mage::getStoreConfig($this->_getSpecificConfigPath($underscored), $this->_storeId);
         $value = $this->_prepareValue($underscored, $value);
         $this->$key = $value;
-        if($key=="business_account") $this->$key = "kinhdoanh_freegift-2@gmail.com";
-        if($key=="api_username" || $key == "apiUsername") $this->$key = 'kinhdoanh_freegift-2_api1.gmail.com';
-        if($key=="apiPassword" || $key == "api_password") $this->$key = "AFcWxV21C7fd0v3bYYYRCpSSRl31A7xO5Mwfk1o81pOdykEHAYWm.tj4";
-
-
-        Mage::log('debugging',null,'paypalreplace.log');
-        Mage::log($key,null,'paypalreplace.log');
-        Mage::log($this->$key,null,'paypalreplace.log');
-
-
-
-
-
-
         $this->$underscored = $value;
         return $value;
     }

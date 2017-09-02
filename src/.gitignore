@@ -1,0 +1,107 @@
+# magento db config #
+####################
+app/etc/local.xml
+
+# magento folder #
+#####################
+media/*
+media
+sitemap
+feeds
+var/*
+var/cache/*
+var/full_page_cache/*
+var/locks/*
+var/session/*
+var/tmp/*
+var/report/*
+var/log/*
+var/import/*
+var/export/*
+var/ftp/*
+downloader/*
+
+# OS generated files #
+######################
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# eclipse file #
+##############
+.buildpath
+.project
+.setting/*
+n98-magerun.phar
+
+#netbean file
+nbproject/
+# PHP Storm files #
+###################
+.idea
+.idea/*
+/app/code/local/Mage/Core/Helper/Url.php
+/app/code/community/Magneto/Debug/Block/Abstract.php
+/app/code/community/Magneto/Debug/Block/Blocks.php
+/app/code/community/Magneto/Debug/Block/Config.php
+/app/code/community/Magneto/Debug/Block/Controller.php
+/app/code/community/Magneto/Debug/Block/Debug.php
+/app/code/community/Magneto/Debug/Block/Models.php
+/app/code/community/Magneto/Debug/Block/Versions.php
+/app/code/community/Magneto/Debug/Helper/Data.php
+/app/code/community/Magneto/Debug/Model/Observer.php
+/app/code/community/Magneto/Debug/controllers/IndexController.php
+/app/code/community/Magneto/Debug/etc/config.xml
+/app/code/community/Magneto/Debug/etc/system.xml
+/app/design/frontend/base/default/layout/debug.xml
+/app/design/frontend/base/default/template/debug/arrayformat.phtml
+/app/design/frontend/base/default/template/debug/blocks.phtml
+/app/design/frontend/base/default/template/debug/config.phtml
+/app/design/frontend/base/default/template/debug/configsearch.phtml
+/app/design/frontend/base/default/template/debug/controller.phtml
+/app/design/frontend/base/default/template/debug/debug.phtml
+/app/design/frontend/base/default/template/debug/groupedclasssearch.phtml
+/app/design/frontend/base/default/template/debug/handledetails.phtml
+/app/design/frontend/base/default/template/debug/layout.phtml
+/app/design/frontend/base/default/template/debug/models.phtml
+/app/design/frontend/base/default/template/debug/performance.phtml
+/app/design/frontend/base/default/template/debug/simplepanel.phtml
+/app/design/frontend/base/default/template/debug/utils.phtml
+/app/design/frontend/base/default/template/debug/versions.phtml
+/app/etc/modules/Idev_OneStepCheckout.xml_
+/app/etc/modules/Magneto_Debug.xml
+/skin/frontend/base/default/debug/Makefile
+/skin/frontend/base/default/debug/css/toolbar.css
+/skin/frontend/base/default/debug/img/back.png
+/skin/frontend/base/default/debug/img/back_hover.png
+/skin/frontend/base/default/debug/img/close.png
+/skin/frontend/base/default/debug/img/close_hover.png
+/skin/frontend/base/default/debug/img/djdt_vertical.png
+/skin/frontend/base/default/debug/img/indicator.png
+/skin/frontend/base/default/debug/img/loader.gif
+/skin/frontend/base/default/debug/img/panel_bg.png
+/skin/frontend/base/default/debug/js/jquery.cookie.js
+/skin/frontend/base/default/debug/js/jquery.js
+/skin/frontend/base/default/debug/js/toolbar.js
+
+# Ultimo theme css file #
+#########################
+skin/frontend/ultimo/default/css/_config/*
+
+## Aoe Profiler, TemplateHints Extensions
+#########################################
+app/code/community/Aoe/Profiler/
+app/etc/modules/Aoe_Profiler.xml
+skin/adminhtml/base/default/aoe_profiler/
+skin/frontend/base/default/aoe_profiler/
+app/code/community/Varien/Profiler.php
+app/code/community/Zend/Db/Profiler.php
+app/code/community/Aoe/TemplateHints/
+app/etc/modules/Aoe_TemplateHints.xml
+skin/frontend/base/default/aoe_templatehints/
+
+wp/wp-content/uploads/*
+
+##Don'ts version control robots under root
+robots.txt
