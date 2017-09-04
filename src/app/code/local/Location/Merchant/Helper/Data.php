@@ -174,12 +174,77 @@ class Location_Merchant_Helper_Data extends Mage_Customer_Helper_Data{
     }
 
     public function isMerchantAccount($groupId){
-        if($groupId){
+        if(!empty($groupId)){
             if($groupId == $this->getMerchantCustomerGroupId()) return true;
         }
         return false;
     }
+    public function getMerchantPayment($groupId = null){
+        $result=array();
+        if(empty($groupId)){
+            $groupId = Mage::getSingleton('customer/session')->getCustomer()->getGroupId();
+        }
+        if($this->isMerchantAccount($groupId)){
 
+
+            return $result;
+        }
+        Mage::throwException(Mage::helper('paypal')->__('There was an error in Paypal processing!'));
+
+    }
+
+    public function findoutMerchantInCart(){
+        $merchants=array();
+        $storeTableName = Mage::getSingleton('core/resource')->getTableName('store_info');
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $cartItems = $quote->getAllVisibleItems();
+        foreach ($cartItems as $item) {
+            $productId = $item->getProductId();
+            $product = Mage::getModel('catalog/product')->load($productId);
+            $storeid= $product->getData('merchant_store');
+            if(!empty($storeid)){
+                $query="SELECT * FROM `".$storeTableName."` where `id` = ".$storeid.";";
+                $results=$this->readingQuery($query);
+                //Zend_debug::dump($results[0]);
+                if(!empty($results[0])){
+                   $id=$results[0]['merchant_id'];
+                   if(!in_array($id,$merchants)) $merchants[] = $id;
+                }
+            }
+        }
+        if(count($merchants) > 1 ){
+            Mage::getSingleton('core/session')->addError(Mage::helper('merchant')->__('Buy products from 2 or more merchants!'));
+            return false;
+        }
+
+        if(count($merchants) == 0 ){
+            //Mage::getSingleton('core/session')->addError(Mage::helper('merchant')->__('Can not find out merchants!'));
+            /** there is no product created by merchants in cart*/
+            return false;
+        }
+        $merchant=Mage::getModel('customer/customer')->load($merchants[0]);
+        return $merchant;
+    }
+    /**
+     * @param string $query
+     * @return array
+     */
+    public function readingQuery($query=""){
+        if(empty($query)) return array();
+        /**
+         * Get the resource model
+         */
+        $resource = Mage::getSingleton('core/resource');
+        /**
+         * Retrieve the read connection
+         */
+        $readConnection = $resource->getConnection('core_read');
+        /**
+         * Execute the query and store the results in $results
+         */
+        $results = $readConnection->fetchAll($query);
+        return $results;
+    }
     public function getMerchantOption() {
         $optionArray = array();
         try{

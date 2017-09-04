@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+   <modules>
+       <Location_Mcpp>
+           <active>true</active>
+           <codePool>local</codePool>
+       </Location_Mcpp>
+   </modules>
+</config>

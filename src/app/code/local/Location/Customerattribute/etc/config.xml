@@ -2,7 +2,7 @@
 <config>
   <modules>
     <Location_Customerattribute>
-      <version>0.0.1.1</version>
+      <version>0.0.1.2</version>
     </Location_Customerattribute>
   </modules>
     <global>

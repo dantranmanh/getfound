@@ -24,10 +24,16 @@ class Location_Merchant_PaymentController extends Mage_Customer_AccountControlle
         }
         $paypalE=$this->getRequest()->getPost('paypal_email');
         $customerId=$this->getRequest()->getPost('customerid');
-        if ($paypalE && $customerId) {
+        $apiname=$this->getRequest()->getPost('paypal_user');
+        $apipass=$this->getRequest()->getPost('paypal_pass');
+        $apis=$this->getRequest()->getPost('paypal_sign');
+        if (!empty($paypalE) && !empty($customerId)) {
             $customer= Mage::getModel('customer/customer')->load($customerId);
-
-            $customer->setData('paypalemail',$paypalE)->save();
+            $customer->setData('paypalemail',$paypalE);
+            if( !empty($apiname)) $customer->setData('apin',$apiname);
+            if( !empty($apipass)) $customer->setData('apip',$apipass);
+            if( !empty($apis)) $customer->setData('apis',$apis);
+            $customer->save();
             Mage::getSingleton('customer/session')->addSuccess('Your Paypal Email has been updated!');
         }
         $this->_redirect('*/*/edit');

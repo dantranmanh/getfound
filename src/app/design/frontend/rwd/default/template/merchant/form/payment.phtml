@@ -40,10 +40,29 @@
         <p class="required"><?php echo $this->__('* Required Fields') ?></p>
         <ul class="form-list">
             <li>
-                <label for="email" class="required"><em>*</em><?php echo $this->__('Paypal Email Address') ?></label>
+                <label for="paypal_email" class="required"><em>*</em><?php echo $this->__('Paypal Email Address') ?></label>
                 <div class="input-box">
                     <input type="text" autocapitalize="off" autocorrect="off" spellcheck="false" name="paypal_email" id="paypal_email" value="<?php echo $this->escapeHtml($this->getCustomer()->getPaypalemail()) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Paypal Email Address')) ?>" class="input-text required-entry validate-email" />
                     <input type="hidden" name="customerid" value="<?php echo $this->getCustomer()->getId(); ?>"/>
+                </div>
+            </li>
+            <li>
+                <label for="paypal_user" class="required"><em>*</em><?php echo $this->__('Paypal User Name') ?></label>
+                <div class="input-box">
+                    <input type="password" autocapitalize="off" autocorrect="off" spellcheck="false" name="paypal_user" id="paypal_user" value="<?php echo $this->escapeHtml($this->getCustomer()->getApin()) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Paypal Username')) ?>" class="input-text required-entry" />
+                </div>
+            </li>
+
+            <li>
+                <label for="paypal_pass" class="required"><em>*</em><?php echo $this->__('Merchant Paypal Password') ?></label>
+                <div class="input-box">
+                    <input type="password" autocapitalize="off" autocorrect="off" spellcheck="false" name="paypal_pass" id="paypal_pass" value="<?php echo $this->escapeHtml($this->getCustomer()->getApip()) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Merchant Paypal Password')) ?>" class="input-text required-entry" />
+                </div>
+            </li>
+            <li>
+                <label for="paypal_sign" class="required"><em>*</em><?php echo $this->__('Merchant Paypal Signiture') ?></label>
+                <div class="input-box">
+                    <input type="password" autocapitalize="off" autocorrect="off" spellcheck="false" name="paypal_sign" id="paypal_sign" value="<?php echo $this->escapeHtml($this->getCustomer()->getApis()) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Merchant Paypal Signiture')) ?>" class="input-text required-entry" />
                 </div>
             </li>
        
